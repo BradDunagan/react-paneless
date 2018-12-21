@@ -315,8 +315,8 @@ class AppContent extends React.Component {
 						<p>- robots work better with more data -</p>
 						<p>- minimal impedance robot development -</p>
 					</span>
-				{this.state.frames}
 				</div>
+				{this.state.frames}
 			</div>
 		);
 	}   //  render()

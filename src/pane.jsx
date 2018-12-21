@@ -179,25 +179,29 @@ class Pane extends React.Component {
 
 	splitDrag() {
 		const sW = 'Pane ' + this.props.paneId + ' splitDrag()';
+	//	console.log ( sW );
 		let sizes = this.eleData[this.eleId].split.instance.getSizes();
 
 	//	if ( ! this.props.parentFnc ) {
 	//		this.props.frameFnc ( { do: 	'content-split-drag',
 	//								sizes: 	sizes } );
 	//	}
+		let cmd = { do: 'splitter-dragged' };
 		let sh = this.state.splitHorz;
 		if ( sh ) {
 			if ( sh.left.paneFnc ) {
-				sh.left.paneFnc ( { do: 'splitter-dragged' } ); }
+				sh.left.paneFnc ( cmd ); }
 			if ( sh.right.paneFnc ) {
-				sh.right.paneFnc ( { do: 'splitter-dragged' } ); }
+				sh.right.paneFnc ( cmd ); }
+			return;
 		}
 		let sv = this.state.splitVert;
 		if ( sv ) {
 			if ( sv.top.paneFnc ) {
-				sv.top.paneFnc ( { do: 'splitter-dragged' } ); }
+				sv.top.paneFnc ( cmd ); }
 			if ( sv.bottom.paneFnc ) {
-				sv.bottom.paneFnc ( { do: 'splitter-dragged' } ); }
+				sv.bottom.paneFnc ( cmd ); }
+			return;
 		}
 	}	//	splitDrag()
 
@@ -319,7 +323,8 @@ class Pane extends React.Component {
 			containerStyle: {
 			//	width:		'100%',
 			//	height:		sp.pe.offsetHeight + 'px' },
-				flex:		'1 1' },
+				flex:		'1 1',
+				overflowX:	'hidden' },
 			splitVert: { 
 				top: {
 					eleId: 			this.eleId + '-top-' + topPaneId,
