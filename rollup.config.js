@@ -25,7 +25,7 @@ export default {
   plugins: [
     external(),
     postcss({
-      modules: true
+      modules: false,
     }),
     url(),
     svgr(),
@@ -33,7 +33,9 @@ export default {
       exclude: 'node_modules/**',
       plugins: [ 'external-helpers' ]
     }),
-    resolve(),
+    resolve( {
+      extensions: [ '.js', '.jsx' ]
+    } ),
     commonjs()
   ]
 }

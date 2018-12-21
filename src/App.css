@@ -1,0 +1,691 @@
+
+.rr-debug-this {
+	display:	flex;
+	position:	absolute;	/*	prevents vert scrollbar due to margin-top	*/
+	margin:		10px;
+	border:		solid 1px red;
+	width:		300px;
+	height:		300px;
+}
+
+.rr-no-content {
+	width:				100%;
+	height:				100%;
+	background-color:	transparent;
+	display:            flex;
+	flex-direction:     row;
+	align-items:        center;
+	justify-content:    center;
+	color:				lightgray;
+}
+
+.rr-app-screen-dialog {
+	position:           absolute;
+	left:               0px;
+	top:                0px;
+	width:              100%;
+	height:             100%;
+	background-color:   rgba(255,255,255,0.7);
+	display:            flex;
+	flex-direction:     row;
+	align-items:        center;
+	justify-content:    center;
+}
+
+.rr-app-frame {                 /*  Should fill the browser window without  */
+	display:            flex;   /*  showing scroll bars.                    */
+	flex:               auto;
+	flex-direction:     column;
+	width:              100%;
+	height:             100%;
+	margin:             0px;
+}
+
+.rr-app-header {
+	display:        	flex;
+	flex-direction:		row;
+	justify-content:	space-between;
+	flex:           	1 1  auto;
+	max-height:     	24px;
+	min-height:     	24px;
+/*  border: solid 1px blue;     */
+}
+
+.rr-app-header-title {
+	display:        flex;
+	font-family:    sans-serif, 'Roboto';
+	font-size:      18px;
+	font-weight:    medium;
+	padding-top:    2px;
+	padding-left:   5px;
+	cursor:         default;
+}
+
+.rr-app-header-menu-bar {
+	margin-top:			6px;
+	margin-left:		20px;
+	display:        	flex;
+	flex-direction:		row;
+	justify-content:	start;
+	flex:           	1 1  auto;
+	max-height:     	18px;
+	min-height:     	18px;
+}
+
+.rr-app-header-menu-bar-item {
+	margin-right:		10px;
+	max-width:			fit-content;
+	flex:           	1 1  auto;
+	cursor:				pointer;
+}
+
+.rr-app-header-pid {
+	display:        flex;
+	padding-top:    6px;
+	padding-right:  5px;
+	cursor:         pointer;    
+}
+
+.rr-app-header-sign-in {
+	display:        flex;
+	padding-top:    6px;
+	padding-right:  5px;
+	cursor:         pointer;    
+}
+
+.rr-app-header-user {
+	display:        flex;
+	padding-top:    6px;
+	padding-right:  5px;
+	cursor:         pointer;    
+}
+
+/*  
+Absolute positioning elements within scrollable div 
+https://stackoverflow.com/questions/985134/absolute-positioning-elements-within-scrollable-div 
+*/
+.rr-app-content {
+/*	background-color:	cadetblue;							*/
+	background-color:	white;
+	flex: 1 1 		auto;
+	border-top:     solid 1px lightsteelblue;
+	border-bottom:  solid 1px lightsteelblue;
+
+	/*  This   position: relative   affects child elements. */
+	position:       relative;   /*  set child ps abs rltv to content div    */
+	overflow:       auto;       /*  show scrolls when necessary             */
+}
+
+.rr-mird-container {
+/*	margin:         5px;			sometimes causes horz scrollbar at bottom
+									of content								*/
+	text-align: 	center;
+	position: 		absolute;
+	width: 			100%;
+}
+.rr-mird-span {
+	color:          lightgray;
+/*	font-family: 	source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+					monospace;												*/
+/*	font-family:    sans-serif, 'Roboto';									*/
+	letter-spacing: 1px;
+	cursor:			default;
+}
+
+.rr-mird-span p {
+	margin:			0px;
+}
+
+.rr-app-footer {
+	flex: 			1 1 auto;
+	max-height:     24px;
+	min-height:     24px;
+/*  border: solid 1px blue;     */
+}
+
+
+
+/* --------------------------  Process Element  ----------------------------  */
+
+.rr-pe-frame {
+	display:            flex;
+	flex:               auto;
+	flex-direction:     column;
+	position:           absolute;
+	border:             solid 1px black;
+	background-color:   white;
+}
+
+.rr-iconized-frame-name {
+	position:			absolute;
+	left:				-10px;
+	top:				62px;
+	width: 				70px;
+	text-align: 		center;
+	word-wrap:	 		break-word;
+	background-color:	white;
+}
+
+.rr-frame-title-bar {
+	display:			flex;
+	flex-direction:		row;
+	align-items: 		flex-start;
+	width:				100%;
+	height:				18px;
+	border-bottom:      solid 1px gray;
+	overflow-x: 		hidden;
+}
+
+.rr-frame-transient-title-bar {
+	position:               absolute;
+	display:				flex;
+	flex-direction:			row;
+	align-items: 			flex-start;
+	width:					100%;
+	height:					18px;
+	cursor:                 default;
+	transition-property:    background-color, opacity, border-bottom;
+	transition-duration:    300ms;
+}
+/*
+.rr-frame-transient-title-bar:hover {
+	background-color:       white;
+	opacity:                0.9;
+}
+*/
+
+.frame-title-bar-burger-menu {
+	width: 			16px;
+	height:			15px;
+	padding:		1px 3px 2px 2px;
+	flex:			0 1 auto;
+	left:			1px;
+	top: 			0px;
+	cursor: 		default;
+}
+.frame-title-bar-burger-menu:hover {
+	background-color:	gainsboro;
+}
+
+.rr-frame-title {
+	flex: 				1 1 auto;
+	overflow-x: 		hidden;
+	text-align: 		left;
+	text-overflow: 		ellipsis;
+	white-space: 		nowrap;
+	padding-left: 		5px;
+	margin-left:		5px;
+	margin-right: 		5px;
+	margin-top: 		1px;
+	font-family:		sans-serif, 'Roboto';
+	font-size:			14px;
+	cursor:				move;
+}
+
+.frame-title-bar-iconize {
+	margin-right:	4px;
+	width: 			16px;
+	height:			15px;
+	flex:			0 1 auto;
+	cursor: 		default;
+	padding-top:	2px;
+	padding-left:	3px;
+	padding-right:	3px;
+	padding-bottom:	1px;
+	background-color:	inherit;
+}
+
+.frame-title-bar-iconize:hover {
+	background-color:	gainsboro;
+}
+
+.frame-title-bar-destroy {
+	width: 			16px;
+	height:			15px;
+	flex:			0 1 auto;
+	cursor: 		default;
+	padding:		2px 2px 1px 2px;
+	background-color:	inherit;
+}
+
+.frame-title-bar-destroy:hover {
+	background-color:	gainsboro;
+}
+
+.rr-pe-frame-content {
+	display:            flex;
+/*	flex-direction:     column;	dependent on split - therefore, in style 	*/
+	flex:               1 1 auto;
+}
+
+
+.rr-pe-frame-status-bar {
+	flex:               1 1 auto;
+	max-height:         18px;
+	min-height:         18px;
+	border-top:         solid 1px black;
+}
+
+
+
+
+/* ---------------------------  Sizing, Moving  ----------------------------  */
+
+.rr-sizer {
+	position:       		absolute;
+	border-left:       		solid 1px lightgray;
+	border-top:       		solid 1px lightgray;
+	cursor:         		nwse-resize;
+	background-color:       transparent;
+	opacity:                0.0;
+	transition-property:    background-color, opacity, border-left, border-top;
+	transition-duration:    300ms;
+}
+
+.rr-sizer:hover {
+	background-color:       white;
+	opacity:                0.9;
+}
+
+.rr-title-bar {
+	position:               absolute;
+	border-bottom: 			solid 1px lightgray;
+	cursor:                 move;
+	background-color:       transparent;
+	opacity:                0.0;
+	transition-property:    background-color, opacity, border-bottom;
+	transition-duration:    300ms;
+}
+
+.rr-title-bar:hover {
+	background-color:       white;
+	opacity:                0.9;
+}
+/*
+.rr-title-bar {
+	position:               absolute;
+	border-bottom: 			solid 1px lightgray;
+	cursor:                 move;
+	background-color:       transparent;
+	opacity:                1.0;
+}
+*/
+
+.rr-transient-title-bar {
+	position:               absolute;
+	left:					0px;
+	top:					0px;
+	border-bottom: 			solid 1px gainsboro;
+	cursor:                 move;
+	background-color:       transparent;
+	opacity:                0.0;
+	transition-property:    background-color, opacity, border-bottom;
+	transition-duration:    300ms;
+}
+
+.rr-transient-title-bar:hover {
+	background-color:       white;
+	opacity:                0.9;
+}
+
+.rr-frame-header-title-bar {
+	width:					100%;
+	height:					18px;
+/*	border-bottom: 			solid 1px gainsboro;	*/
+}
+
+.rr-pane-button-bars-container {
+	width:					100%;
+	height:					18px;
+}
+
+.frame-burger-menu {
+	width: 			18px;
+	position: 		absolute;
+	left:			1px;
+	top: 			0px;
+	cursor: 		pointer;
+}
+
+.frame-iconize {
+	margin-right:	4px;
+	width: 			18px;
+	float: 			right;
+	cursor: 		pointer;
+}
+
+.frame-destroy {
+	margin-right:	2px;
+	width: 			18px;
+	float: 			right;
+	cursor: 		pointer;
+}
+
+
+/*
+.rr-button-bar {
+	position:               absolute;
+	background-color:       transparent;
+	opacity:                0.0;
+	transition-property:    background-color, opacity, border-bottom;
+	transition-duration:    300ms;
+}
+
+.rr-button-bar:hover {
+	background-color:       white;
+	opacity:                0.9;
+}
+*/
+/*	Absolute position overrides flex flow.
+	Do not specifiy left, top.
+	Width must be set in JavaScript as the container width changes (presumably
+	to the width of the container).											  */
+/*
+.rr-button-bar {
+	position:				absolute;
+	height:					18px;
+	border-bottom: 			solid 1px gainsboro;
+	text-align:				center;
+}
+*/
+.rr-button-bar {
+	position:               absolute;
+	height:					18px;
+	border-bottom: 			solid 1px;
+	text-align:				center;
+	cursor:					default;
+	background-color:       transparent;
+	border-bottom-color:	transparent;
+	opacity:                0.0;
+	transition-property:    background-color, border-bottom-color, opacity;
+	transition-duration:    300ms;
+}
+
+.rr-button-bar:hover {
+	background-color:       white;
+	border-bottom-color:	gainsboro;
+	opacity:                0.9;
+}
+
+.rr-btn-burger {
+	width: 				16px;
+	height:				15px;
+	padding:			3px 3px 2px 2px;
+/*	margin-left:		1px;
+	margin-right:		4px;	*/
+	float: 				left;
+	cursor: 			default;
+}
+
+.rr-btn-burger:hover {
+	background-color:	gainsboro;
+}
+.rr-pane-button-bar {
+	position:               absolute;
+/*	top:					18px;		*/
+/*	height:					18px;		*/
+/*	height:					38px;		*/
+	width:					100%;
+	display: 				flex;
+	align-items: 			flex-end;
+	justify-content:		center;
+	border-bottom: 			solid 1px;
+	text-align:				center;
+	cursor:					default;
+/*	background-color:       transparent;
+	border-bottom-color:	transparent;
+	opacity:                0.0;		*/
+/*	border-bottom-color:	red;		*/
+/*	opacity:                1.0;		*/
+	transition-property:    background-color, border-bottom-color, opacity;
+	transition-duration:    300ms;
+}
+
+
+/* ------------------------------  Spliting  -------------------------------  */
+
+/*
+.btn-split-horz {
+	margin-right:	4px;
+	width: 			18px;
+	float: 			right;
+	cursor: 		pointer;
+}
+
+.btn-split-vert {
+	margin-right:	4px;
+	width: 			18px;
+	float: 			right;
+	cursor: 		pointer;
+}
+*/
+.btn-split-horz {
+	width: 				17px;
+	height:				15px;
+	padding:			3px 3px 2px 3px;
+	cursor: 			default;
+}
+
+.btn-split-horz:hover {
+	background-color:	gainsboro;
+}
+
+.btn-split-vert {
+	width: 				15px;
+	height:				17px;
+	padding:			2px 3px 1px 3px;
+	cursor: 			default;
+}
+
+.btn-split-vert:hover {
+	background-color:	gainsboro;
+}
+
+.split {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: 	border-box;
+	box-sizing: 		border-box;
+	overflow-y: 		auto;
+	overflow-x: 		hidden;
+}
+.pane-content {
+	background-color: 	#fff;
+/*	padding-top:		2px;			*/
+/*	padding-left: 		6px;			*/
+	display:            flex;
+	flex:               1 1 auto;
+}
+.pane {
+	background-color: 	lightblue;
+	display:            flex;
+/*	flex-direction:     column;	dependent on split - therefore, in style 	*/
+	flex:               1 1 auto;
+	position:			relative;	/*	To make absolute work for btn bar.	*/
+}
+.gutter {
+	background-color:		transparent;
+	background-repeat: 		no-repeat;
+	background-position: 	50%;
+}
+.gutter.gutter-horizontal {
+	cursor: 			col-resize;
+	background-image: 	url('../node_modules/split.js/grips/vertical.png');
+}
+.gutter.gutter-vertical {
+	cursor: 			row-resize;
+	background-image: 	url('../node_modules/split.js/grips/horizontal.png');
+}
+.split.split-horizontal, .gutter.gutter-horizontal {
+	float: 				left;
+}
+.split.split-vertical, .gutter.gutter-vertical {
+/*	flex: 				0 1 auto;	*/
+}
+
+
+/* ----------------------------  Burger Menu  ------------------------------  */
+
+.rr-burger-menu {
+	position:			fixed;
+	border:				solid 1px black;
+	background-color:	white;
+}
+
+.rr-burger-menu ul {
+	margin:				2px 4px 0px 8px;
+	padding:			0px;
+}
+
+.rr-burger-menu ul li {
+	list-style-type:	none;
+	text-align:			left;
+	margin-bottom:		4px;
+	padding-left:		4px;
+	padding-right:		2px;
+	cursor:				default;
+}
+/*
+.rr-burger-menu ul li:hover {
+	background-color:	lightgrey;
+}
+*/
+.rr-menu-items-separator {
+	margin-top:			4px;
+	border-top:			solid 1px lightgray;
+	margin-bottom:		4px;
+}
+
+
+/* --------------------------------  Tabs  ---------------------------------  */
+
+.rr-tabs {
+	flex:			1 1 auto;
+	display:		flex;
+	flex-direction:	column;
+}
+
+.rr-tab-pages {
+	display:		flex;
+	flex:			1 1 auto;
+	border-bottom:	solid 1px black;
+}
+
+.rr-tab-page-names {
+	display:		flex;
+	flex-direction:	row;
+	flex:			1 1 auto;
+	min-height:		22px;
+	max-height:		22px;
+}
+
+.rr-tab-page-name {
+/*	margin-right:	4px;			*/
+	margin-top:		-1px;
+	padding-left:	8px;
+	padding-right:	8px;
+	padding-top:	3px;
+	padding-bottom:	3px;
+	border-right:	solid 1px gray;
+	cursor:			pointer;
+}
+
+
+/* ---------------------------  Name Dialog(s) ------------------------------ */
+
+.rr-pe-dlg-name-dlg {
+	display:            flex;
+	flex-direction:     row;
+	height:             135px;
+	border:             solid 1px black;
+	background-color:   white;
+}
+
+.rr-pe-dlg-name-main {
+	flex:               1 1 auto;
+/*	height:             400px;			*/
+	width:              350px;
+}
+
+.rr-pe-dlg-name-title {
+	position:           relative;
+	left:               45px;
+	top:                7px;
+	width:              260px;
+	height:             36px;
+	font-size:          18px;
+	text-align:         center;
+}
+
+.rr-pe-dlg-name-buttons-container {
+	display:            flex;
+	flex-direction:     row;
+	position:           relative;
+	left:               45px;
+	top:                20px;
+	width:              260px;
+	height:             26px;
+	justify-content:    space-between;  /*  main-axis                       */
+	align-items:        center;         /*  cross-axis                      */
+}
+
+.rr-general-button {
+	font-family:        sans-serif, 'Roboto';
+	font-size:          12px;
+	background:         white;
+	border-style:       solid;
+	border-width:       1px;
+	border-color:       lightgray;
+	padding:            3px 8px 3px 8px;
+	min-width:          60px;    
+}
+
+.rr-pe-dlg-name-container { /* identical to rr-app-sign-in-email-container? */
+	display:            flex;
+	flex-direction:     column;
+	position:           relative;
+	left:               45px;
+	top:                10px;
+	width:              260px;
+	height:             36px;
+	justify-content:    space-between;  /*  main-axis                       */
+	align-items:        center;         /*  cross-axis                      */
+}
+
+.rr-app-label-input {
+	display:            flex;
+	flex-direction:     row;
+	position:           relative;
+	left:               0px;
+	top:                0px;
+	width:              260px;
+	height:             26px;
+	justify-content:    space-between;  /*  main-axis                       */
+	align-items:        center;         /*  cross-axis                      */
+}
+
+.rr-pe-dlg-name-label {
+	flex:               1 1 auto;
+	max-width:          55px;
+/*  border:             dashed 1px lightgray;   */
+	text-align:         right;
+}
+
+.rr-pe-dlg-name-input {
+	flex:               1 1 auto;
+	max-width:          190px;
+	font-family:        Verdana, Geneva, Tahoma, sans-serif;
+	font-size:          12px;
+}
+
+.rr-app-input-error {
+	flex:               1 1 auto;
+	position:           relative;
+	left:               0px;
+	top:                0px;
+	width:              260px;
+	height:             10px;
+	text-align:         right;
+	font-size:          10px;
+	color:              red;
+}
+
