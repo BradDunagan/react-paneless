@@ -555,6 +555,22 @@ https://stackoverflow.com/questions/985134/absolute-positioning-elements-within-
 	margin-bottom:		4px;
 }
 
+.rr-menu-item {
+	min-width:			200px;	
+	display:			flex;
+	flex-direction:		row;
+}
+
+.rr-menu-item-text {
+	margin-right:		20px;
+	flex:				1 1 auto;
+}
+
+.rr-menu-item-hotkey {
+	flex: 				1 1 auto;
+	text-align: 		right;
+}
+
 
 /* --------------------------------  Tabs  ---------------------------------  */
 

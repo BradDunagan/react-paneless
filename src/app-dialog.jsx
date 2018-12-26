@@ -29,6 +29,13 @@ class AppDialog extends React.Component {
 	}	//	doAll()
 
 	render() {
+		if ( this.props.comp ) {
+			return (
+				<div className	= "rr-app-screen-dialog" >
+					{ this.props.comp }
+				</div>
+			);
+		}
 		switch ( this.props.dlg ) {
 //			case 'sign-in': 
 //				return (

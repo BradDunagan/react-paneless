@@ -113,6 +113,11 @@ class AppFrame extends Component {
 	updateDialogState() {
 		this.setState ( {  
 			appDialog: this.dlgList.map ( ( r, i ) => {
+				if ( r.dlg === 'app-dialog' ) {
+					return ( <AppDialog key 		= { i }
+										appFrameFnc = { this.doAll }
+										comp 		= { r.comp } /> );
+				}
 				if ( ! r.mnu ) {
 					return ( <AppDialog key = {i}
 										appFrameFnc = {this.doAll}
@@ -177,6 +182,12 @@ class AppFrame extends Component {
 			this.dlgList.push ( { dlg: 		'dlg-name',
 								  upFnc: 	o.upFnc,
 								  ctx: 		o.ctx } );
+			this.updateDialogState();
+			return;
+		}
+		if ( o.do === 'app-dialog' ) {
+			this.dlgList.push ( { dlg: 		'app-dialog',
+								  comp:		o.dlgComp } );
 			this.updateDialogState();
 			return;
 		}

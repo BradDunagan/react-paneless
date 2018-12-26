@@ -98,12 +98,22 @@ class ContentExample1 extends Component {
 				this.setState ( o.state.state ); }
 			return;
 		}
-		if ( o.do === 'pane-burger-click' ) {
-			this.burgerClick ( o );
+	//	if ( o.do === 'pane-burger-click' ) {
+	//		this.burgerClick ( o );
+	//		return;
+	//	}
+		if ( o.do === 'append-menu-items' ) {
+			let a = o.menuItems;
+			a.push ( { type: 'item', text: 'Client' } );
+			a.push ( { type: 'item', text: 'Content' } );
+			a.push ( { type: 'item', text: 'Burger' } );
+			a.push ( { type: 'item', text: 'Menu' } );
+			a.push ( { type: 'item', text: 'Items' } );
 			return;
 		}
 		if ( o.do === 'menu-item' ) {
-			return;
+			//	Return true if the menu item is handled here.
+			return false;
 		}
 	}	//	doAll()
 

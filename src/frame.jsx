@@ -156,7 +156,7 @@ class Frame extends React.Component {
 
 	keyDown ( o ) {
 		let sW = 'Frame keyDown()';
-		console.log ( sW + '  ' + o.ev.key );
+	//	console.log ( sW + '  ' + o.ev.key );
 		if ( this.state.iconized ) {
 			if ( o.ev.key === 'Enter' ) {
 				this.clickIcon ( null ); }		//	Un-iconize.

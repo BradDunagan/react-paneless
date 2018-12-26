@@ -38,7 +38,7 @@ class AppContent extends React.Component {
 
 	keyDown ( o ) {
 		let sW = 'AppContent keyDown()';
-		console.log ( sW + '  ' + o.ev.key );
+	//	console.log ( sW + '  ' + o.ev.key );
 		let frameId = this.focusedFrameId;
 		if ( ! frameId ) {
 			return; }
@@ -312,8 +312,8 @@ class AppContent extends React.Component {
 				 className 	= "rr-app-content">
 				<div className = "rr-mird-container">
 					<span className = "rr-mird-span">
-						<p>- robots work better with more data -</p>
 						<p>- minimal impedance robot development -</p>
+						<p>- robots work better with more data -</p>
 					</span>
 				</div>
 				{this.state.frames}

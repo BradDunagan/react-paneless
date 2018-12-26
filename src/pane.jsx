@@ -135,16 +135,35 @@ class Pane extends React.Component {
 	burgerClick() {
 		let sW = 'Pane burgerClick()';
 		console.log ( sW );
-		let menuItems = [ {type: 'item',	text: 'Tabs' }, ];
+		let menuItems = [];
+
+		if ( ! this.ccFnc ) {
+			menuItems.push ( { type: 'item',	text: 'Tabs' } ); }
+
 		if ( this.props.tabId ) {
 			menuItems.push ( { type: 'item',	text: 'Tab Name ...' } ); }
-		menuItems.push ( {type: 'separator', 	text: '' } );
 
-		this.props.frameFnc ( {
-			do:			'append-menu-items',
-			to:			'pane-burger',
-			menuItems:	menuItems
-		} );
+		if ( ! this.ccFnc ) {
+			if ( menuItems.length > 0 ) {
+				menuItems.push ( {type: 'separator', 	text: '' } ); }
+			this.props.frameFnc ( {
+				do:			'append-menu-items',
+				to:			'pane-burger',
+				menuItems:	menuItems
+			} ); }
+		else {
+			let ccMenuItems = [];
+			this.ccFnc ( {
+				do:			'append-menu-items',
+				to:			'pane-burger',
+				menuItems:	ccMenuItems
+			} );
+			if ( ccMenuItems.length > 0 ) {
+				if ( menuItems.length > 0 ) {
+					menuItems.push ( {type: 'separator', 	text: '' } ); }
+				menuItems = menuItems.concat ( ccMenuItems );
+			} }
+
 		let pe = document.getElementById ( this.eleId );
 		let r  = pe.getBoundingClientRect();
 		this.props.frameFnc ( { 
@@ -516,10 +535,10 @@ class Pane extends React.Component {
 			}
 		}	//	if ( o.do === 'set-call-down-correct' ) 
 		if ( o.do === 'pane-burger-click' ) {
-			if ( this.ccFnc ) {
-				this.ccFnc ( { do: 			o.do,
-							   paneEleId:	this.eleId } );
-				return; }
+		//	if ( this.ccFnc ) {
+		//		this.ccFnc ( { do: 			o.do,
+		//					   paneEleId:	this.eleId } );
+		//		return; }
 			this.burgerClick();
 			return;
 		}
@@ -673,6 +692,8 @@ class Pane extends React.Component {
 		}
 
 		if ( o.do === 'menu-item' ) {
+			if ( this.ccFnc && this.ccFnc ( o ) ) {
+				return; }
 			if ( o.menuItemText === 'Tabs' ) {
 				diagsFlush();
 				diagsPrint ( sW, 2, 2000 );

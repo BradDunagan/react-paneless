@@ -36,7 +36,7 @@ class DlgName extends React.Component {
 
 	keyDown ( ev ) {
 		let sW = 'DlgName keyDown()';
-		console.log ( sW + '  ' + ev.key );
+	//	console.log ( sW + '  ' + ev.key );
 		let i;
 		if ( ev.key === 'Enter' ) {
 			if ( this.state.okDisabled ) {

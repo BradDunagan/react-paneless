@@ -35,7 +35,7 @@ class NameNotIdentifier extends React.Component {
 	}
 
 	keypress ( e ) {
-		console.log ( 'keypress() ' + e.key );
+	//	console.log ( 'keypress() ' + e.key );
 	}
 
 	change ( e ) {
