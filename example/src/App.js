@@ -322,7 +322,7 @@ class App extends Component {
 		diagsPrint ( sW, 1, 2000 );
 		diag ( [1], sW );
 		let state = this.appContentFnc ( { do: 'get-state' } );
-		let c = state.content = Object.assign ( {}, this.content );
+		let c = state.content = clone ( this.content );
 		for ( let paneId in c ) {
 			let pc = c[paneId];
 			if ( pc.install ) {

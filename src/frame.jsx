@@ -19,7 +19,8 @@ Also -
 	
 */
 
-import React			from 'react';
+import React				from 'react';
+import clone 				from 'clone';
 
 import FrameHeader			from './frame-header';
 import FrameTransientHeader	from './frame-transient-header';
@@ -320,7 +321,7 @@ class Frame extends React.Component {
 		diag ( [2], sW );
 		let iconized = null;
 		if ( this.state.iconized ) {
-			iconized = Object.assign ( {}, this.state.iconized ); }
+			iconized = clone ( this.state.iconized ); }
 		//	First, transition to the frame's position and size.
 		let style 		= this.state.style;
 		let borderColor = this.state.iconized.style.borderColor;
@@ -381,12 +382,12 @@ class Frame extends React.Component {
 
 	setBorderColor ( color ) {
 		if ( this.state.iconized ) {
-			let iconized   = Object.assign ( {}, this.state.iconized );
-			iconized.style = Object.assign ( {}, this.state.iconized.style );
+			let iconized   = clone ( this.state.iconized );
+			iconized.style = clone ( this.state.iconized.style );
 			iconized.style.borderColor = color;
 			this.setState ( { iconized: iconized } );	}
 		else {
-			let style = Object.assign ( {}, this.state.style );
+			let style = clone ( this.state.style );
 			style.borderColor = color;
 			this.setState ( { style: style } );	}
 	}	//	setBorderColor()
@@ -496,24 +497,25 @@ class Frame extends React.Component {
 			return;
 		}
 		if ( o.do === 'get-state' ) {
-			let assign = Object.assign;
 			if ( this.state.iconized ) {
 				return {
 					hdrVisible:	!! this.state.normalHeader,
 					ftrVisible:	this.isFooterVisible(),
 					frameName:	this.state.frameName,
+					frameType:	this.props.frameType,
 					frameId:	this.props.frameId,
 					paneId:		this.props.paneId,
-					style:		assign ( {}, this.state.style ),
-					iconized:	assign ( {}, this.state.iconized ) }; }
+					style:		clone ( this.state.style ),
+					iconized:	clone ( this.state.iconized ) }; }
 			this.rootPaneFnc ( o );		//	update pane's state in app store
 			return {
 				hdrVisible:	!! this.state.normalHeader,
 				ftrVisible:	this.isFooterVisible(),
 				frameName:	this.state.frameName,
+				frameType:	this.props.frameType,
 				frameId:	this.props.frameId,
 				paneId:		this.props.paneId,
-				style:	  	assign ( {}, this.state.style ) };
+				style:	  	clone ( this.state.style ) };
 		}
 		if ( o.do === 'set-state' ) {
 			this.rootPaneFnc ( o );		//	get state from app store

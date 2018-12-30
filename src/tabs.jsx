@@ -205,14 +205,6 @@ class Tabs extends Component {
 				self.selectTab ( selectedEleId );
 				return; }
 			let name = names[i++]
-		//	let pageState = o.state.pages[name[1].tabId].state;
-		//	self.addTabPageName ( name[1].text, ( eleId ) => {
-		//		let tabId = self.names[eleId].tabId;
-		//		self.pages[tabId].state = Object.assign ( {}, pageState );
-		//		if ( name[0] === o.state.selectedNameEleId ) {
-		//			selectedEleId = eleId; }
-		//		eachName();
-		//	} );
 			let page = o.state.pages[name[1].tabId];
 			self.addTabPageName ( page.paneId, name[1].text, ( eleId ) => {
 				if ( name[0] === o.state.selectedNameEleId ) {
@@ -308,10 +300,6 @@ class Tabs extends Component {
 				names[eleId] = { tabId: name.tabId,
 								 text:	name.text };
 				let page = this.pages[name.tabId];
-			//	pages[name.tabId] = {
-			//		state: 	page.state ? Object.assign ( {}, page.state )
-			//						   : page.paneFnc ( { do: 'get-state' } )
-			//	}
 				pages[name.tabId] = {
 					paneId:		page.paneId,
 				}

@@ -3,8 +3,9 @@
 12345678901234567890123456789012345678901234567890123456789012345678901234567890
 */
 import React, { Component } from 'react';
+import clone 				from 'clone';
 
-import Frame			from './frame';
+import Frame				from './frame';
 import { getPaneId, getLastPaneId, setLastPaneId }	from './pane';
 
 import {diag, diagsFlush, diagsPrint} 	from './diags';
@@ -118,6 +119,7 @@ class AppContent extends React.Component {
 					   hdrVisible		= { o.hdrVisible }
 					   ftrVisible		= { o.ftrVisible }
 					   frameName		= { o.frameName }
+					   frameType		= { o.frameType }
 					   frameId 			= { o.frameId }
 					   paneId			= { o.paneId }
 					   appFrameFnc 		= { this.props.appFrameFnc } 
@@ -130,6 +132,7 @@ class AppContent extends React.Component {
 					   clientFnc		= { this.props.clientFnc } />;
 
 		this.frames[o.frameId] = { frame: 		frame,
+								   type:		o.frameType,
 								   ccEleId:		o.ccEleId,
 								   frameFnc:	null,
 								   iconSlot:	null };
@@ -153,6 +156,7 @@ class AppContent extends React.Component {
 						   ftrVisible		= { o.ftrVisible }
 						   frameName		= { o.frameName }
 						   frameId 			= { o.frameId }
+						   frameType		= { o.frameType }
 						   paneId			= { o.paneId }
 						   appFrameFnc 		= { this.props.appFrameFnc } 
 						   appContentFnc	= { this.doAll }
@@ -230,7 +234,7 @@ class AppContent extends React.Component {
 				let frm = this.frames[frameId];
 				state.frames[frameId] = {
 					frame:		frm.frameFnc ( o ),
-					iconSlot:	Object.assign ( {}, frm.iconSlot ) } }
+					iconSlot:	clone ( frm.iconSlot ) } }
 			return state;
 		}
 		if ( o.do === 'set-state' ) {

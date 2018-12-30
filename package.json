@@ -59,6 +59,7 @@
     "dist"
   ],
   "dependencies": {
+    "clone": "^2.1.2",
     "split.js": "^1.5.10"
   }
 }

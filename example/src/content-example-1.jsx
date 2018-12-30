@@ -1,9 +1,10 @@
 
 import React, { Component } from 'react';
+import clone 				from 'clone';
 
 import { diag, 
 		 diagsFlush, 
-		 diagsPrint } 	from 'paneless';
+		 diagsPrint } 		from 'paneless';
 
 let example1Count = 0;
 
@@ -88,7 +89,7 @@ class ContentExample1 extends Component {
 			return;
 		}
 		if ( o.do === 'get-state' ) {
-			return { state: Object.assign ( {}, this.state ) };
+			return { state: clone ( this.state ) };
 		}
 		if ( o.do === 'set-state' ) {
 		//	this.setState ( o.state.state );
