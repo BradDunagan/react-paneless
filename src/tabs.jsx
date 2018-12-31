@@ -154,9 +154,9 @@ class Tabs extends Component {
 		this.showPage ( this.names[eleId].tabId );
 	}	//	selectTab()
 
-	addTab ( cb ) {
+	addTab ( cb, paneId ) {
 		let self = this;
-		this.addTabPageName ( 0, 'Tab Name', ( eleId ) => {
+		this.addTabPageName ( paneId, 'Tab Name', ( eleId ) => {
 			self.nameFncs[eleId] ( { do: 		'select',
 									 selected:	true } );
 			self.selectTab ( eleId );
@@ -281,8 +281,9 @@ class Tabs extends Component {
 			return;
 		}
 		if ( o.do === 'add-tab' ) {
-			this.addTab();
-			return;
+			let paneId = getPaneId();
+			this.addTab ( null, paneId );
+			return paneId;
 		}
 		if ( o.do === 'name-tab' ) {
 			this.nameTab ( o );

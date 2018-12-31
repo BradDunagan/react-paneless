@@ -89,6 +89,7 @@ class App extends Component {
 			parentStyle:	{ 
 				position:	'relative',
 				overflowY:	'auto' },
+			contentTypeName:	'ContentExample1',
 			content: 		(
 				<ContentExample1 
 					frameId			= { frameId }
@@ -199,7 +200,7 @@ class App extends Component {
 							  + ' ERROR(?): unrecognized paneId'
 							  + ' (' + o.paneId + ')' );
 				return; }
-			content.paneContentFnc = o.fnc;
+			content.paneContentFnc = o.contentFnc;
 			if ( content.install ) {			//	Client content defined?
 				content.paneContentFnc ( Object.assign ( 
 					{ do: 'install-client-content' }, content.install ) );
@@ -252,6 +253,7 @@ class App extends Component {
 			let c = content.install.content;
 			//	Note that the component name is in c.type.name which in this
 			//	case is (for now) assumed to be ContentExample1.
+			content.install.contentTypeName = 'ContentExample1';
 			content.install.content = ( 
 				<ContentExample1 
 					frameId			= { c.props.frameId }

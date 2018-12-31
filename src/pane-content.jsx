@@ -18,9 +18,9 @@ class PaneContent extends React.Component {
 		diag ( [1, 2], sW );
 
 		this.state = {
-		//	style:		{ visibility:	'hidden' },
-			style:		null,
-			content:	( <NoContent /> ),
+			style:			null,
+			typeName:		'NoContent',
+			content:		( <NoContent /> ),
 		};
 
 		this.doAll			= this.doAll.bind ( this );
@@ -36,6 +36,7 @@ class PaneContent extends React.Component {
 			diag ( [1, 2], sW + ' install-client-content' );
 			this.setState ( {
 				style:		o.parentStyle,
+				typeName:	o.contentTypeName,
 				content:	o.content
 			} );
 			return;
@@ -78,10 +79,12 @@ class PaneContent extends React.Component {
 
 		//	Do this here (after mounting) because the client might command
 		//	'install-client-content' which will setState().
-		this.props.clientFnc ( { do: 		'set-call-down',
-								 to:		'pane-content',
-								 paneId:	this.props.paneId,
-								 fnc:		this.doAll } );
+		this.props.clientFnc ( { do: 			'set-call-down',
+								 to:			'pane-content',
+								 paneId:		this.props.paneId,
+								 paneFnc:		this.props.paneFnc,
+								 contentFnc:	this.doAll,
+								 tabs:			this.props.tabs } );
 
 		this.props.paneFnc ( { do: 		'set-call-down-correct',
 							   to:		'pane-content',
@@ -91,6 +94,10 @@ class PaneContent extends React.Component {
 	componentDidUpdate() {
 		const sW = 'PaneContent ' + this.props.paneId + ' componentDidUpdate()';
 		diag ( [1, 2], sW );
+		this.props.clientFnc ( { do: 		'pane-content-update',
+								 paneId:	this.props.paneId,
+								 tabs:		this.props.tabs,
+								 typeName:	this.state.typeName } );
 	}	//	componentDidUpdate()
 
 	componentWillUnmount() {

@@ -290,6 +290,8 @@ class Pane extends React.Component {
 				},
 				incomplete: 	true }
 		} );
+		return { lftPaneId: lftPaneId,
+				 rgtPaneId: rgtPaneId };
 	}	//	splitHorz()
 
 	splitVert ( o ) {
@@ -351,8 +353,8 @@ class Pane extends React.Component {
 				},
 				incomplete: 	true, }
 		} );
-
-	//	this.ccEleId	  = null;
+		return { topPaneId: topPaneId,
+				 botPaneId: botPaneId };
 	}	//	splitVert()
 
 	propagateDown_SizeOp ( o ) {
@@ -510,8 +512,7 @@ class Pane extends React.Component {
 			return;
 		}
 		if ( o.do === 'split-horz' ) {
-			this.splitHorz ( o );
-			return;
+			return this.splitHorz ( o );
 		}
 		if ( o.do === 'split-vert' ) {
 			if ( o.paneId ) {
@@ -519,8 +520,7 @@ class Pane extends React.Component {
 
 				return;
 			}
-			this.splitVert ( o );
-			return;
+			return this.splitVert ( o );
 		}
 		if ( o.do == 'size-start' ) {
 			if ( ! o.visitedPanes[this.props.paneId] ) {
@@ -669,6 +669,13 @@ class Pane extends React.Component {
 			o.paneContentFnc = this.correctPaneContentFnc;
 			this.props.frameFnc ( o );
 			return;
+		}
+
+		if ( o.do === 'add-tab' ) {
+			if ( ! this.tabsFnc ) {
+				console.log ( sW + ' ERROR: ! this.tabsFnc' );
+				return; }
+			return this.tabsFnc ( o );
 		}
 
 	//	if ( o.do === 'install-content' ) {
