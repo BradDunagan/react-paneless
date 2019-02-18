@@ -403,8 +403,15 @@ class Frame extends React.Component {
 				return; }
 			if ( o.to === 'frame-header' ) {
 				self.headerFnc = o.fnc;
+				//	The normal frame header component comes and goes so we can
+				//	use this signal to update the panes regarding the size of 
+				//	their area.
+				if ( self.rootPaneFnc ) {
+					self.rootPaneFnc ( { do: 'size', visitedPanes: {} } ); }
 				return; }
 			if ( o.to === 'frame-footer' ) {
+				//	The footer dis/appears.  That is, the footer component always
+				//	exists.  See 'footer-updated'.
 				self.footerFnc = o.fnc;
 				return; }
 			if ( o.to === 'root-pane' ) {
@@ -627,6 +634,13 @@ class Frame extends React.Component {
 		if ( o.do === 'is-mouse-in-any-top-pane-button-bar' ) {
 		//	console.log ( sW );
 			return this.mouseInTopPaneButtonBar;
+		}
+		if ( o.do === 'footer-updated' ) {
+			//	Footer has dis/appeared - the size of area available for pane(s)
+			//	has changed.
+			if ( this.rootPaneFnc ) {
+				this.rootPaneFnc ( { do: 'size', visitedPanes: {} } ); }
+			return; 
 		}
 	}   //  doAll()
 

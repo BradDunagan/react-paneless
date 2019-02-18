@@ -57,7 +57,7 @@ class PaneButtonBar extends Component {
 	
 	mouseEnter ( ev ) {
 		let sW = 'PaneButtonBar mouseEnter()';
-	//	console.log ( sW );
+		console.log ( sW );
 		let style = {
 			height:					'20px',
 			backgroundColor:        'white',

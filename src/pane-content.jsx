@@ -37,8 +37,10 @@ class PaneContent extends React.Component {
 			this.setState ( {
 				style:		o.parentStyle,
 				typeName:	o.contentTypeName,
-				content:	o.content
-			} );
+				content:	o.content		   } );
+			if ( this.props.paneFnc && o.initialTabText ) {
+				this.props.paneFnc ( { do: 				'set-initial-tab-text',
+									   initialTabText: 	o.initialTabText } ); }
 			return;
 		}
 	}	//	doAll()

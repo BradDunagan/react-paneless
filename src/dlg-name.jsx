@@ -116,6 +116,7 @@ class DlgName extends React.Component {
 					</div>
 
 					<NameNotIdentifier dlg 		= { this.doAll }
+									   label	= { this.props.ctx.nameLabel }
 									   curText	= { this.props.ctx.curName } />
 					<div className = "rr-pe-dlg-name-buttons-container">
 						 <button style = {{ visibility: 'hidden' }}>

@@ -61,10 +61,16 @@ class TabPages extends Component {
 	//			{this.state.pages}
 	//		</div>
 	//	);
+		let page = this.props.page 
+			? this.props.page
+			: (
+				<div className = 'rr-no-content'>
+					click + to add tab pages
+				</div> );
 		return (
 			<div id			= { this.props.eleId }
 				 className	= 'rr-tab-pages' >
-				{this.props.page}
+				{ page }
 			</div>
 		);
 	}   //  render()

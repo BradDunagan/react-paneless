@@ -72,7 +72,7 @@ class App extends Component {
 		return this.content[paneId];
 	}	//	definePaneContent()
 
-	defineInstall ( typeName, frameId, paneId, ccEleId ) {
+	defineInstall ( typeName, frameId, paneId, ccEleId, initialTabText ) {
 		const sW = 'App defineInstall()  frameId ' + frameId
 									+ '  paneId ' + paneId;
 		diag ( [1, 2, 3], sW );
@@ -90,6 +90,7 @@ class App extends Component {
 				position:	'relative',
 				overflowY:	'auto' },
 			contentTypeName:	'ContentExample1',
+			initialTabText:		initialTabText ? initialTabText : null,
 			content: 		(
 				<ContentExample1 
 					frameId			= { frameId }
@@ -285,7 +286,8 @@ class App extends Component {
 			content = this.definePaneContent ( o, 0, false ); }
 		content.install = this.defineInstall ( null, o.frameId, 
 													 o.paneId, 
-													 content.ccEleId );
+													 content.ccEleId,
+													 'example' );
 
 		content.paneContentFnc ( Object.assign ( 
 			{ do: 'install-client-content' }, content.install ) );

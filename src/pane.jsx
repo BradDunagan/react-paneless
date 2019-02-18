@@ -378,9 +378,10 @@ class Pane extends React.Component {
 		}
 		if ( this.ccFnc ) {
 			let e = document.getElementById ( this.eleId );
-			o.paneW = e.clientWidth;
-			o.paneH = e.clientHeight;
-			this.ccFnc ( o ); }
+			if ( e ) {
+				o.paneW = e.clientWidth;
+				o.paneH = e.clientHeight;
+				this.ccFnc ( o ); } }
 	}	//	propagateDown_SizeOp()
 
 //	sizeStartByTabPage() {
@@ -678,6 +679,14 @@ class Pane extends React.Component {
 			return this.tabsFnc ( o );
 		}
 
+		if ( o.do === 'set-initial-tab-text' ) {
+			if ( (! this.props.tabId) || (! this.props.tabsFnc) ) {
+				return; }
+			this.props.tabsFnc ( { do:		'name-tab-name',
+								   ctx:		{ tabId: this.props.tabId },
+								   name: 	o.initialTabText } );
+			return;
+		}
 	//	if ( o.do === 'install-content' ) {
 	//		this.ccEleId = o.ccEleId;
 	//		this.setState ( { 
@@ -710,6 +719,8 @@ class Pane extends React.Component {
 	//		}
 	//		return;
 	//	}
+		if ( this.ccFnc ) {
+			return this.ccFnc ( o ); }
 	}   //  doAll()
 
 	render() {

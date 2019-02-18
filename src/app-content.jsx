@@ -23,8 +23,16 @@ class AppContent extends React.Component {
 
 		this.eleId = 'rr-app-content';
 
+		this.e2eCmdInputEleId	= "rr-0-e2et-cmd-input-input";
+		this.e2eCmdOutputEleId	= "rr-0-e2et-cmd-output-input";
+		this.e2eCmdCnt			= 0;
+		
 		this.frames = {};			//	PEs, VPs (what else?) code/interfaces.
 
+		this.e2eCmdChange		= this.e2eCmdChange.bind ( this );
+//		this.e2eCmdInput		= this.e2eCmdInput.bind ( this );
+		this.e2eSetOutput		= this.e2eSetOutput.bind ( this );
+		this.e2eClearOutput		= this.e2eClearOutput.bind ( this );
 		this.keyDown			= this.keyDown.bind ( this );
 		this.setFrameFocus2		= this.setFrameFocus2.bind ( this );
 		this.setFrameFocus		= this.setFrameFocus.bind ( this );
@@ -36,6 +44,45 @@ class AppContent extends React.Component {
 		this.focusedFrameId = null;
 
 	}   //  constructor()
+
+	e2eCmdChange ( ev ) {
+		let sW = 'AppContent e2eCmdChange()';
+		let e = document.getElementById ( this.e2eCmdInputEleId );
+		let s = e.value;
+		console.log ( sW + ' s: ' + s );
+		let len = s.length;
+		if ( len < 4 ) {
+			return; }
+		if ( s.slice ( -4 ) !== '}eoc' ) {
+			return; }
+		
+		this.e2eCmdCnt += 1;
+	//	this.e2eSetOutput ( { result: {
+	//						  text: 	'whoa',
+	//						  cmdCnt:	this.e2eCmdCnt } } );
+		console.log ( sW + ' s: ' + s + '  len: ' + len );
+		let cmd = s.slice ( 0, len - 3 );
+		console.log ( sW + ' cmd: ' + cmd )
+		this.props.clientFnc ( { do: 	'e2e-test',
+								 cmd:	cmd } );
+	}	//	e2eCmdChange()
+
+//	e2eCmdInput ( ev ) {
+//		let sW = 'AppContent e2eCmdInput()';
+//		console.log ( sW );
+//	}	//	e2eCmdInput()
+
+	e2eClearOutput ( o ) {
+		let sW = 'AppContent e2eClearOutput()';
+		let e = document.getElementById ( this.e2eCmdOutputEleId );
+		e.value = '';
+	}	//	e2eClearOutput()
+
+	e2eSetOutput ( o ) {
+		let sW = 'AppContent e2eSetOutput()';
+		let e = document.getElementById ( this.e2eCmdOutputEleId );
+		e.value = JSON.stringify ( o.result );
+	}	//	e2eSetOutput()
 
 	keyDown ( o ) {
 		let sW = 'AppContent keyDown()';
@@ -181,6 +228,14 @@ class AppContent extends React.Component {
 		if ( o.to ) {
 			sW += ' to ' + o.to; }
 		diag ( [1, 2], sW  );
+		if ( o.do === 'e2e-clear-output' ) {
+			this.e2eClearOutput ( o );
+			return;
+		}
+		if ( o.do === 'e2e-set-output' ) {
+			this.e2eSetOutput ( o );
+			return;
+		}
 		if ( o.do === 'set-call-down' ) {
 			if ( o.to === 'frame' ) {
 				let frame = this.frames[o.frameId];
@@ -314,10 +369,26 @@ class AppContent extends React.Component {
 		return (
 			<div id 		= { this.eleId }
 				 className 	= "rr-app-content">
+		{ /*	<div className = "rr-e2e-test-cmd-container">
+					<input id 			= { this.e2eCmdInputEleId }
+						   type			= "text"
+						   autoCorrect	= "off"
+						   spellCheck	= "false"
+						   className 	= "rr-input-test"
+						   defaultValue	= "e2e test command" 
+						   onChange 	= { this.e2eCmdChange } />
+					<input id 			= { this.e2eCmdOutputEleId }
+						   type			= "text"
+						   autoCorrect	= "off"
+						   spellCheck	= "false"
+						   className 	= "rr-input-test"
+						   style		= { { borderTop: 'none' } }
+						   defaultValue	= "e2e test result" />
+				</div>											*/ }
 				<div className = "rr-mird-container">
 					<span className = "rr-mird-span">
+						<p>- robots want instruction -</p>
 						<p>- minimal impedance robot development -</p>
-						<p>- robots work better with more data -</p>
 					</span>
 				</div>
 				{this.state.frames}

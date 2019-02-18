@@ -98,19 +98,19 @@ class AppHeaderMenuBar extends React.Component {
 		return (
 			<div id 		= "rr-app-header-menu-bar"
 				 className 	= "rr-app-header-menu-bar" >
-				<AppHeaderMenuBarItem eleId		  = { 'rr-ahmbi-1' }
+		{ /* 	<AppHeaderMenuBarItem eleId		  = { 'rr-ahmbi-1' }
 									  text 		  =	{ 'New Frame' } 
 									  clientFnc   = { this.props.clientFnc } />
-		{ /* 		<AppHeaderMenuBarItem eleId		  = { 'rr-ahmbi-2' }
+				<AppHeaderMenuBarItem eleId		  = { 'rr-ahmbi-2' }
 									  text 		  =	{ 'New Viewport' } 
 									  clientFnc   = { this.props.clientFnc } />
-		 */ }
 				<AppHeaderMenuBarItem eleId		  = { 'rr-ahmbi-3' }
 									  text 		  =	{ 'Save Layout' } 
 									  clientFnc   = { this.props.clientFnc } />
 				<AppHeaderMenuBarItem eleId		  = { 'rr-ahmbi-4' }
 									  text 		  =	{ 'Load Layout' } 
 									  clientFnc   = { this.props.clientFnc } />
+		 */ }
 			</div>
 		)
 	}	//	render()

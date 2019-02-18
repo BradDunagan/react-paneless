@@ -14,14 +14,19 @@ class FrameFooter extends React.Component {
 			style:	props.visible ? null : { display: 'none' }
 		};
 
+		this.isVisible	= this.isVisible.bind ( this );
 		this.doAll		= this.doAll.bind ( this );
 	}	//	constructor()
 
+	isVisible() {
+		if ( ! (this.state.style && this.state.style.display) ) {
+			return true; }
+		return this.state.style.display !== 'none'; 
+	}	//	isVisible()
+
 	doAll ( o ) {
 		if ( o.do === 'is-visible' ) {
-			if ( ! (this.state.style && this.state.style.display) ) {
-				return true; }
-			return this.state.style.display !== 'none'; }
+			return this.isVisible(); }
 		if ( o.do === 'show' ) {
 			this.setState ( { style: null } );
 			return;	}
@@ -49,6 +54,11 @@ class FrameFooter extends React.Component {
 								to:		'frame-footer',
 								fnc:	null } );
 	}	//	componentWillUnmount()
+
+	componentDidUpdate() {
+		this.props.frameFnc ( { do: 		'footer-updated',
+								isVisible:	this.isVisible() } )
+	}
 	
 }   //  class FrameFooter
 
