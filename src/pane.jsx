@@ -7,7 +7,7 @@
 import React			from 'react';
 
 import PaneContent		from './pane-content';
-import PaneButtenBar 	from './pane-button-bar';
+import PaneButtonBar 	from './pane-button-bar';
 import Split 			from 'split.js'
 import clone 			from 'clone';
 
@@ -72,6 +72,8 @@ class Pane extends React.Component {
 	//	this.sizeStartByTabPage		= this.sizeStartByTabPage.bind ( this );
 	//	this.sizeByTabPage			= this.sizeByTabPage.bind ( this );
 		this.propagateDown_SizeOp 	= this.propagateDown_SizeOp.bind ( this );
+		this.enumPanes 				= this.enumPanes.bind ( this );
+		this.keyBurgerMenu			= this.keyBurgerMenu.bind ( this );
 		this.doAll 					= this.doAll.bind ( this );
 
 
@@ -90,6 +92,8 @@ class Pane extends React.Component {
 			splitVert:		null,
 
 			tabs:			props.tabs ? true : false,
+
+			hasFocus:		false
 		};
 
 		this.tabsFnc 		= null;
@@ -101,6 +105,10 @@ class Pane extends React.Component {
 
 		this.ccFnc		= null;
 		this.ccState	= null;
+
+		this.bbFnc		= null;
+
+		this.isShowingBurgerMenu = false;
 
 		if ( ! this.props.parentFnc ) {
 		//	this.props.frameFnc ( { do:		'set-call-down',
@@ -168,9 +176,11 @@ class Pane extends React.Component {
             menuItems:	menuItems,
             upFnc:		this.doAll,
             ctx:		{ what:		'pane burger',
-						  after:	'menu-item' }
+						  dismiss:	'burger-menu-dismissed',
+						  after:	'menu-item', }
 		} );
 
+		this.isShowingBurgerMenu = true;
 	}	//	burgerClick()
 
 	myElementStyleFnc ( dim, size, gutSize ) {
@@ -384,6 +394,31 @@ class Pane extends React.Component {
 				this.ccFnc ( o ); } }
 	}	//	propagateDown_SizeOp()
 
+	enumPanes ( o ) {
+		let sh = this.state.splitHorz;
+		if ( sh ) {
+			sh.left.paneFnc ( o );
+			sh.right.paneFnc ( o );	
+			return; }
+		let sv = this.state.splitVert;
+		if ( sv ) {
+			sv.top.paneFnc ( o );
+			sv.bottom.paneFnc ( o ); 
+			return; }
+		o.panes[this.props.paneId] = this.doAll; 
+	}	//	enumPanes()
+
+	keyBurgerMenu ( o ) {
+	//	if ( this.bbFnc ) {
+	//		this.bbFnc ( { do: 'key-show' } ); 	}
+		if ( this.isShowingBurgerMenu ) {
+			this.props.frameFnc ( { do: 'menu-dismiss' } );
+			this.props.frameFnc ( { do: 'show-burger-menu' } );
+			return;
+		}
+		this.burgerClick();
+	}	//	keyBurgerMenu()
+
 //	sizeStartByTabPage() {
 //		let e = document.getElementById ( this.eleId );
 //		this.h0 = Number.parseInt ( e.style.height );
@@ -493,6 +528,10 @@ class Pane extends React.Component {
 				}
 				return;
 			}
+			if ( o.to === 'button-bar' ) {
+				this.bbFnc = o.bbFnc;
+				return;
+			}
 			return;
 		}	//	if ( o.do === 'set-call-down' ) 
 		if ( o.do === 'set-call-down-correct' ) {
@@ -561,6 +600,27 @@ class Pane extends React.Component {
 		}
 		if ( o.do === 'splitter-dragged' ) {
 			this.propagateDown_SizeOp ( o );
+			return;
+		}
+		if ( o.do === 'enum-panes' ) {
+			this.enumPanes ( o );
+			return;
+		}
+		if ( o.do === 'focus' ) {
+			this.setState ( { hasFocus: true } );
+			return;
+		}
+		if ( o.do === 'not-focus' ) {
+			this.setState ( { hasFocus: false } );
+			return;
+		}
+		if ( o.do === 'key-burger-menu' ) {
+			this.keyBurgerMenu ( o );
+			return;
+		}
+		if ( o.do === 'keyboard-key-down' ) {
+			if ( this.ccFnc ) {
+				this.ccFnc ( o ); }
 			return;
 		}
 		if ( o.do === 'get-state' ) {
@@ -649,6 +709,11 @@ class Pane extends React.Component {
 								 state:	tabsState } );
 			} );
 			return (!!sh) || (!!sv);
+		}
+
+		if ( o.do === 'burger-menu-dismissed' ) {
+			this.isShowingBurgerMenu = false;
+			return;
 		}
 
 		if ( o.do === 'menu-item' ) {
@@ -803,6 +868,8 @@ class Pane extends React.Component {
 										 frameFnc 	= { this.props.frameFnc }
 										 clientFnc	= { this.props.clientFnc } 
 										 tabs 		= { true } />
+							{ this.state.hasFocus && 
+								<div className = 'rr-focused-rect'/> }
 						</div>
 					);
 				}
@@ -820,10 +887,12 @@ class Pane extends React.Component {
 								//	 style	 = { this.state.contentStyle }
 								//	 content = { this.state.clientContent } 
 									 clientFnc	= { this.props.clientFnc } />
-						<PaneButtenBar atFrameTop	= { this.props.atFrameTop } 
+						<PaneButtonBar atFrameTop	= { this.props.atFrameTop } 
 									   bbId			= { this.props.paneId }
 									   paneFnc		= { this.doAll } 
 									   frameFnc 	= { this.props.frameFnc } />
+						{ this.state.hasFocus && 
+							<div className = 'rr-focused-rect'/> }
 					</div>
 				); 
 			} else {
@@ -841,6 +910,8 @@ class Pane extends React.Component {
 										 frameFnc 	= { this.props.frameFnc }
 										 clientFnc	= { this.props.clientFnc } 
 										 tabs 		= { true } />
+							{ this.state.hasFocus && 
+								<div className = 'rr-focused-rect'/> }
 						</div>
 					);
 				}
@@ -856,10 +927,12 @@ class Pane extends React.Component {
 					  				 paneFnc	= { this.doAll }
 									 frameFnc 	= { this.props.frameFnc } 
 									 clientFnc	= { this.props.clientFnc } />
-						<PaneButtenBar atFrameTop	= { this.props.atFrameTop } 
+						<PaneButtonBar atFrameTop	= { this.props.atFrameTop } 
 									   bbId			= { this.props.paneId }
 									   paneFnc		= { this.doAll } 
 									   frameFnc 	= { this.props.frameFnc } />
+						{ this.state.hasFocus && 
+							<div className = 'rr-focused-rect'/> }
 					</div>
 				); 
 			}
@@ -895,10 +968,12 @@ class Pane extends React.Component {
 							 paneFnc	= { this.doAll }
 							 frameFnc 	= { this.props.frameFnc } 
 							 clientFnc	= { this.props.clientFnc } />
-				<PaneButtenBar atFrameTop	= { this.props.atFrameTop } 
+				<PaneButtonBar atFrameTop	= { this.props.atFrameTop } 
 							   bbId			= { this.props.paneId }
 							   paneFnc		= { this.doAll } 
 							   frameFnc 	= { this.props.frameFnc } />
+				{ this.state.hasFocus && 
+					<div className = 'rr-focused-rect'/> }
 			</div>
 		);
 	}   //  render()

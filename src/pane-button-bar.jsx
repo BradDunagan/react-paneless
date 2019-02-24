@@ -14,9 +14,6 @@ import {diag, diagsFlush, diagsPrint} 	from './diags';
 //	If the pane borders the top of the frame and the frame's title bar is
 //	hidden then the frame's title bar should also appear and the button bar
 //	should be below the title bar.
-//
-//	But it seems the mouse is sensed in just one element at a time. So how 
-//	to know when the mouse 
 
 
 class PaneButtonBar extends Component {
@@ -45,6 +42,7 @@ class PaneButtonBar extends Component {
 		if ( props.atFrameTop && isFrameHeaderTransient ) {
 			this.state.style.top = '18px'; }
 
+		this.show			= this.show.bind ( this );
 		this.mouseEnter		= this.mouseEnter.bind ( this );
 		this.mouseLeave		= this.mouseLeave.bind ( this );
 		this.doAll 			= this.doAll.bind ( this );
@@ -55,9 +53,7 @@ class PaneButtonBar extends Component {
 		this.frameHdrWasHidden = true;
 	}	//	constructor
 	
-	mouseEnter ( ev ) {
-		let sW = 'PaneButtonBar mouseEnter()';
-		console.log ( sW );
+	show() {
 		let style = {
 			height:					'20px',
 			backgroundColor:        'white',
@@ -71,6 +67,12 @@ class PaneButtonBar extends Component {
 		if ( this.props.atFrameTop ) {
 			this.props.frameFnc ( { do: 'show-header' } ); } 
 		this.setState ( { style: style } );
+	}	//	show()
+
+	mouseEnter ( ev ) {
+		let sW = 'PaneButtonBar mouseEnter()';
+	//	console.log ( sW );
+		this.show();
 	}	//	mouseEnter()
 	
 	mouseLeave ( ev ) {
@@ -164,6 +166,10 @@ class PaneButtonBar extends Component {
 				return { left: 	Number.parseInt ( style.left ),
 						 width:	Number.parseInt ( style.width ) }; }
 			return null;
+		}
+		if ( o.do === 'key-show' ) {
+			this.show();
+			return;
 		}
 	}	//	doAll()
 

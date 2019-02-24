@@ -30,7 +30,6 @@ import FrameFooter			from './frame-footer';
 import TitleBar 			from './title-bar'
 */
 import Sizer 				from './sizer'
-import BurgerMenu			from './burger-menu';
 
 import {diag, diagsFlush, diagsPrint} 	from './diags';
 
@@ -64,6 +63,10 @@ class Frame extends React.Component {
 		this.nameFrame			= this.nameFrame.bind ( this );
 		this.nameFrameName		= this.nameFrameName.bind ( this );
 		this.setBorderColor		= this.setBorderColor.bind ( this );
+		this.cyclePaneFocus		= this.cyclePaneFocus.bind ( this );
+		this.refocusPane		= this.refocusPane.bind ( this );
+		this.unfocusPane		= this.unfocusPane.bind ( this );
+		this.keyBurgerMenu		= this.keyBurgerMenu.bind ( this );
 		this.doAll 				= this.doAll.bind ( this );
 
 		/*	From persistence - as an icon -
@@ -148,6 +151,10 @@ class Frame extends React.Component {
 
 		this.mouseInTopPaneButtonBar = false;
 
+		this.focusedPaneId	= 0;
+
+		this.isShowingBurgerMenu = false;
+
 	}	//	constructor()
 
 	zTop() {
@@ -228,8 +235,10 @@ class Frame extends React.Component {
 						  { type: 'item', 		text: itemTextFtr } ],
 			upFnc:		this.doAll,
 			ctx:		{ what:		'frame burger',
+						  dismiss:	'burger-menu-dismissed',
 						  after:	'menu-item' }
 		} );
+		this.isShowingBurgerMenu = true;
 	}	//	burgerClick()
 
 	iconize2() {
@@ -392,6 +401,89 @@ class Frame extends React.Component {
 			this.setState ( { style: style } );	}
 	}	//	setBorderColor()
 
+	cyclePaneFocus ( o ) {
+		let panes = {};
+		this.rootPaneFnc ( { do: 	'enum-panes',
+							 panes:	panes } );
+
+		let paneFnc, paneId, paneIds = Object.keys ( panes );
+		paneIds.forEach ( ( x, i ) => { 
+			paneIds[i] = Number.parseInt ( x ) } );
+		paneIds.sort();
+		if ( this.focusedPaneId === 0 ) {
+			if ( ! paneIds[0] ) {
+				return null; }
+			paneId  = this.focusedPaneId = paneIds[0]
+			paneFnc = panes[paneId];
+			paneFnc ( { do: 'focus' } );
+			return paneFnc;
+		}
+		paneId = this.focusedPaneId;
+		let i = paneIds.indexOf ( paneId );
+		if ( i >= 0 ) {
+			panes[paneId] ( { do: 'not-focus' } ); 
+			i++; 
+			if ( i >= paneIds.length ) {
+				i = 0; } }
+		else {
+			i = 0; }
+		if ( paneIds[i] ) {
+			paneId = this.focusedPaneId = paneIds[i]
+			paneFnc = panes[paneId];
+			paneFnc ( { do: 'focus' } );
+			return paneFnc;
+		}
+		return null;
+	}	//	cyclePaneFocus()
+
+	refocusPane() {
+		let panes = {};
+		this.rootPaneFnc ( { do: 	'enum-panes',
+							panes:	panes } );
+		if ( this.focusedPaneId > 0 ) {
+			let paneFnc = panes[this.focusedPaneId];
+			if ( paneFnc ) {
+				paneFnc ( { do: 'focus' } ); 
+				return paneFnc; } }
+
+		let paneFnc, paneId, paneIds = Object.keys ( panes );
+		if ( paneIds.length === 0 ) {
+			return null; }
+		paneIds.forEach ( ( x, i ) => { 
+			paneIds[i] = Number.parseInt ( x ) } );
+		paneIds.sort();
+		paneId = this.focusedPaneId = paneIds[0];
+		paneFnc = panes[paneId];
+		paneFnc ( { do: 'focus' } ); 
+		return paneFnc;
+	}	//	refocusPane()
+
+	unfocusPane() {
+		if ( this.focusedPaneId === 0 ) {
+			return; }
+		let panes = {};
+		this.rootPaneFnc ( { do: 	'enum-panes',
+							 panes:	panes } );
+		let paneFnc = panes[this.focusedPaneId];
+		if ( paneFnc ) {
+			paneFnc ( { do: 'not-focus' } ); }
+	}	//	unfocusPane()
+
+	keyBurgerMenu ( o ) {
+		if ( this.isShowingBurgerMenu ) {
+			this.props.appFrameFnc ( { do: 'menu-dismiss' } ); }
+		let paneFnc = null;
+		if ( this.focusedPaneId === 0 ) {
+			paneFnc = this.refocusPane(); }
+		else {
+			let panes = {};
+			this.rootPaneFnc ( { do: 	'enum-panes',
+								panes:	panes } );
+			paneFnc = panes[this.focusedPaneId]; }
+		if ( paneFnc ) {
+			paneFnc ( o ); }
+	}	//	keyBurgerMenu()
+
 	doAll ( o ) {
 		let sW = this.props.frameId + ' Frame doAll() ' + o.do;
 		if ( o.to ) {
@@ -438,10 +530,28 @@ class Frame extends React.Component {
 		}
 		if ( o.do === 'focus' ) {
 			this.setBorderColor ( 'blue' );
-			return;
+			return this.refocusPane();
 		}
 		if ( o.do === 'not-focus' ) {
 			this.setBorderColor ( 'black' );
+			this.unfocusPane();
+			return;
+		}
+		if ( o.do === 'cycle-pane-focus' ) {
+			return this.cyclePaneFocus();
+		}
+		if ( o.do === 'key-burger-menu' ) {
+			this.keyBurgerMenu ( o );
+			return;
+		}
+		if ( o.do === 'menu-dismiss' ) {
+			this.props.appFrameFnc ( o );
+			return;
+		}
+		if ( o.do === 'show-burger-menu' ) {
+			if ( this.isShowingBurgerMenu ) {
+				return; }
+			this.burgerClick();
 			return;
 		}
 		if ( o.do === 'keyboard-key-down' ) {
@@ -548,6 +658,10 @@ class Frame extends React.Component {
 		}
 		if ( o.do === 'append-menu-items' ) {
 			this.props.appContentFnc ( o );
+			return;
+		}
+		if ( o.do === 'burger-menu-dismissed' ) {
+			this.isShowingBurgerMenu = false;
 			return;
 		}
 		if ( o.do === 'menu-item' ) {

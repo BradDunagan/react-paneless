@@ -19,6 +19,8 @@ class AppFrame extends Component {
 		this.appContentFnc		= null;
 		this.activeMenuFnc		= null;
 		this.activeDialogFnc	= null;
+		this.focusedFrameFnc	= null;
+		this.focusedPaneFnc		= null;
 
 		this.keyDown		= this.keyDown.bind ( this );
 		this.mouseMove 		= this.mouseMove.bind ( this );
@@ -51,24 +53,53 @@ class AppFrame extends Component {
 			 && this.activeDialogFnc ( { do: 'keyboard-key-down', ev: ev } ) ) {
 			return; }
 
+		if (    this.focusedPaneFnc 
+			 && this.focusedPaneFnc ( { do: 'keyboard-key-down', ev: ev } ) ) {
+			return; }
+
 		if ( this.appContentFnc ( { do: 'keyboard-key-down', ev: ev } ) ) {
 			return; }
 
-		if ( ev.ctrlKey ) {
-			console.log ( sW + ' ctrl ' + ev.key ); }
+	//	if ( ev.ctrlKey ) {
+	//		console.log ( sW + ' ctrl ' + ev.key ); }
 
-		//	Shift-Tab to cycle focus on not-iconized frames.
-		if ( ev.shiftKey ) {
-			console.log ( sW + ' shift ' + ev.key ); 
-			if ( ev.key === 'Tab' ) {
+	//	if ( ev.altKey ) {
+	//		console.log ( sW + ' alt ' + ev.key ); }
+
+	//	//	Shift-Tab to cycle focus on not-iconized frames.
+	//	if ( ev.shiftKey ) {
+		//	Alt-F 	cycle focus on frames and the app title menu.
+		//	Alt-P 	cycle focus on panes withing a frame.
+		//	Alt-B 	show burger menu. First focused pane's then a second
+		//			alt-B to show the focused frame's. 
+		if ( ev.altKey ) {
+	//		console.log ( sW + ' shift ' + ev.key ); 
+			console.log ( sW + ' alt ' + ev.key ); 
+	//		if ( ev.key === 'Tab' ) {
+			let key = ev.key.toUpperCase();
+			if ( key === 'F' ) {
 				ev.preventDefault();
 				//	If menu and not app title menu then close it.
 				if ( 	this.activeMenuFnc 
 					 && ! this.activeMenuFnc ( { do: 'is-app-title-menu' } ) ) {
 					this.activeMenuFnc ( { do: 'keyboard-escape' } ); }
-				//	Focus on next frame.
-				this.appContentFnc ( { do: 'cycle-frame-focus' } );
+				//	Focus on next frame. Or show the app title menu.
+				let focus = this.appContentFnc ( { do: 'cycle-frame-focus' } );
+				if ( focus ) {
+					this.focusedFrameFnc = focus.frameFnc;
+					this.focusedPaneFnc  = focus.paneFnc; }
+				else {
+					this.focusedFrameFnc = null;
+					this.focusedPaneFnc  = null; }
 				return; } 
+			if ( key === 'P' ) {
+				if ( typeof this.focusedFrameFnc === 'function' ) {
+					this.focusedPaneFnc = this.focusedFrameFnc ( { do: 'cycle-pane-focus' } ); }
+				return; }
+			if ( key === 'B' ) {
+				if ( typeof this.focusedFrameFnc === 'function' ) {
+					this.focusedFrameFnc ( { do: 'key-burger-menu' } ); }
+				return; }
 		}
 
 		if ( ev.key === 'Escape' ) {
@@ -141,8 +172,9 @@ class AppFrame extends Component {
 				this.appContentFnc = o.fnc; 
 				return; }
 			if ( o.to === 'active-menu' ) {
+				let prevGAMF = this.activeMenuFnc;	//	Global Active Menu Function
 				this.activeMenuFnc = o.fnc;
-				return; }
+				return prevGAMF; }
 			if ( o.to === 'active-dialog' ) {
 				this.activeDialogFnc = o.fnc;
 				return; }
@@ -198,6 +230,8 @@ class AppFrame extends Component {
 			return;
 		}
 		if ( o.do === 'menu-dismiss' ) {
+			if ( this.activeMenuFnc ) {
+				this.activeMenuFnc ( { do: 'being-dismissed' } ); }
 			this.dlgList.pop();
 			this.updateDialogState();
 			this.activeMenuFnc = null;
@@ -210,7 +244,15 @@ class AppFrame extends Component {
 			this.activeDialogFnc = null;
 			return;
 		}
-
+		if ( o.do === 'set-focused-frame-fnc' ) {
+			if ( o.focus ) {
+				this.focusedFrameFnc = o.focus.frameFnc;
+				this.focusedPaneFnc  = o.focus.paneFnc; }
+			else {
+				this.focusedFrameFnc = null;
+				this.focusedPaneFnc  = null; }
+			return;			
+		}
 	}	//	doAll()
 
 	render() {

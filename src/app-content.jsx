@@ -99,16 +99,18 @@ class AppContent extends React.Component {
 	setFrameFocus2 ( frameId ) {
 		let frame = this.frames[frameId];
 		if ( ! frame ) {
-			return; }
+			return null; }
 		this.focusedFrameId = frameId;
 		frame.frameFnc ( { do: 'z-top' } );
-		frame.frameFnc ( { do: 'focus' } );
+		let paneFnc = frame.frameFnc ( { do: 'focus' } );
+		return { frameFnc: 	frame.frameFnc,
+				 paneFnc:	paneFnc };
 	}	//	setFrameFocus2()
 
 	setFrameFocus ( frameId ) {
 		let sW = 'AppContent setFrameFocus()';
 		if ( this.focusedFrameId === frameId ) {
-			return; }
+			return null; }
 		if ( typeof this.focusedFrameId === 'number' ) {	
 			if ( this.focusedFrameId === 0 ) {
 				this.props.appFrameFnc ( { 
@@ -119,8 +121,8 @@ class AppContent extends React.Component {
 		}
 		if ( frameId === null ) {
 			this.focusedFrameId = null;
-			return; }
-		this.setFrameFocus2 ( frameId );
+			return null; }
+		return this.setFrameFocus2 ( frameId );
 	}	//	setFrameFocus()
 
 	cycleFrameFocus() {
@@ -133,12 +135,13 @@ class AppContent extends React.Component {
 			if ( this.focusedFrameId === 0 ) {
 				this.props.appFrameFnc ( { do: 'not-focus-app-title' } );
 				if ( ! frameIds[0] ) {
-					return; }
+					return null; }
 				frameId = this.focusedFrameId = frameIds[0]
 				frame = this.frames[frameId];
-				frame.frameFnc ( { do: 'focus' } );
+				let paneFnc = frame.frameFnc ( { do: 'focus' } );
 				frame.frameFnc ( { do: 'z-top' } );
-				return;
+				return { frameFnc: 	frame.frameFnc,
+						 paneFnc:	paneFnc };
 			}
 			frameId = this.focusedFrameId;
 			let i = frameIds.indexOf ( frameId );
@@ -150,14 +153,16 @@ class AppContent extends React.Component {
 			if ( frameIds[i] ) {
 				frameId = this.focusedFrameId = frameIds[i]
 				frame = this.frames[frameId];
-				frame.frameFnc ( { do: 'focus' } );
+				let paneFnc = frame.frameFnc ( { do: 'focus' } );
 				frame.frameFnc ( { do: 'z-top' } );
-				return;
+				return { frameFnc: 	frame.frameFnc,
+						 paneFnc:	paneFnc };
 			}
 		}
 		//	First focus on app title display its menu.
 		this.props.appFrameFnc ( { do: 'focus-app-title' } );
 		this.focusedFrameId = 0;	//	Indicates app title menu.
+		return null;
 	}	//	cycleFrameFocus()
 
 	addFrame ( o ) {
@@ -188,7 +193,9 @@ class AppContent extends React.Component {
 			fa.push ( this.frames[id].frame ); }
 
 		this.setState ( { frames: fa }, () => {
-			this.setFrameFocus ( o.frameId );
+			let focus = this.setFrameFocus ( o.frameId );
+			this.props.appFrameFnc ( { do:		'set-focused-frame-fnc',
+									   focus:	focus } );
 		} );
 
 		return o.frameId;
@@ -259,11 +266,12 @@ class AppContent extends React.Component {
 			return;
 		}
 		if ( o.do === 'cycle-frame-focus' ) {
-			this.cycleFrameFocus();
-			return;
+			return this.cycleFrameFocus();
 		}
 		if ( o.do === 'set-frame-focus' ) {
-			this.setFrameFocus ( o.frameId );
+			let focus = this.setFrameFocus ( o.frameId );
+			this.props.appFrameFnc ( { do:		'set-focused-frame-fnc',
+									   focus:	focus } );
 			return;
 		}
 		if ( o.do === 'menu-dismiss' ) {

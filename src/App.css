@@ -544,6 +544,16 @@ https://stackoverflow.com/questions/985134/absolute-positioning-elements-within-
 }
 
 
+.rr-focused-rect {
+    position: 			absolute;
+    margin: 			1px;
+	background-color: 	transparent;
+    width: 				calc(100% - 6px);
+    height: 			calc(100% - 6px);
+	border:				solid 2px rgba(0,0,255,0.1);
+	pointer-events: 	none;
+}
+
 /* ----------------------------  Burger Menu  ------------------------------  */
 
 .rr-burger-menu {

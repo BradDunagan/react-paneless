@@ -9,7 +9,7 @@ import React, { Component } from 'react';
 import {diag, diagsFlush, diagsPrint} 	from './diags';
 
 
-class BurgerMenu extends Component {
+class MenuItem extends Component {
 	constructor ( props ) {
 		super ( props );
 
@@ -41,6 +41,6 @@ class BurgerMenu extends Component {
 	}	//	componentDidMount()
 
 
-}   //  class BurgerMenu
+}   //  class MenuItem
 
-export default BurgerMenu;
+export default MenuItem;

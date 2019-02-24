@@ -51,20 +51,44 @@ class BurgerMenu extends Component {
 
 		this.curItem = null;
 
-		this.itemEleIdPrefix = 'rr-menu-item-'
+		this.itemEleIdPrefix = this.props.eleId + '-menu-item-'
 
 	}	//	constructor
 
 	setGlobalActiveMenuFnc ( fnc ) {
-		this.props.appFrameFnc ( { do:	'set-call-down',
-								   to:	'active-menu',
-								   fnc:	fnc } );
+		this.prevGAMF = this.props.appFrameFnc ( { do:	'set-call-down',
+												   to:	'active-menu',
+												   fnc:	fnc } );
 	}	//	setGlobalActiveMenuFnc()
 
 	selectItem ( i ) {
-		this.props.screenFnc ( { do: 'menu-dismiss' } );
-		this.setGlobalActiveMenuFnc ( null );
 		let item = this.props.items[i];
+		if ( item.bSubmenu ) {
+			if ( item.fnc ) {
+				let menuItems = item.fnc ( item ); 
+				if ( ! menuItems ) {
+					return; }
+				let ele = document.getElementById ( this.props.eleId );
+
+				let x =   Number.parseInt ( this.props.style.left )
+						+ ele.clientWidth + 4;
+				let y =   Number.parseInt ( this.props.style.top )
+						+ 0;
+				this.props.screenFnc ( {
+					do:				'push-sub-menu',
+					menuEleId:		this.props.eleId + '-s',
+					menuX:			x,
+					menuY:			y,
+					menuItems:		menuItems,
+					appFrameFnc: 	this.props.appFrameFnc,
+					screenFnc:		this.props.screenFnc,
+					upFnc:			this.props.upFnc,
+					ctx:			this.props.ctx } );
+				return; }
+			return; }
+		this.props.screenFnc ( { do: 'menu-dismiss' } );
+	//	this.setGlobalActiveMenuFnc ( this.prevGAMF );
+		this.setGlobalActiveMenuFnc ( null );
 		if ( item.fnc ) {
 			item.fnc ( null ); 
 			return; }
@@ -87,7 +111,7 @@ class BurgerMenu extends Component {
 
 	keyDown ( ev ) {
 		let sW = 'BurgerMenu keyDown()';
-	//	console.log ( sW + '  ' + ev.key );
+		console.log ( sW + '  ' + this.props.eleId + '  ' + ev.key );
 		if ( ev.key === 'Enter' ) {
 			if ( this.curItem ) {
 				this.selectItem ( this.curItem.idx );
@@ -121,6 +145,20 @@ class BurgerMenu extends Component {
 				if ( j === i ) {
 					return true; } }
 			this.setCurItem ( i );
+			return true; }
+		if ( ev.key === 'ArrowRight' ) {
+			if ( ! this.curItem ) {
+				return false; }
+			let i    = this.curItem.idx;
+			let item = this.props.items[i];
+			if ( item.bSubmenu ) {
+				this.selectItem ( i ); }
+			return true; }
+		if ( ev.key === 'ArrowLeft' ) {
+			if ( ! this.props.isSubMenu ) {
+				return false; }
+			this.setGlobalActiveMenuFnc ( this.prevGAMF );
+			this.props.screenFnc ( { do: 'pop-sub-menu' } );
 			return true; }
 		for ( i = 0; i < nItems; i++ ) {
 			let item = items[i];
@@ -163,12 +201,21 @@ class BurgerMenu extends Component {
 			return ctx.what === 'app title';
 		}
 		if ( o.do === 'keyboard-escape' ) {
+			if ( this.props.isSubMenu ) {
+				this.props.screenFnc ( { do: 'pop-sub-menu' } );
+				this.setGlobalActiveMenuFnc ( this.prevGAMF );
+				return; }
 			this.props.screenFnc ( { do: 'menu-dismiss' } );
-			this.setGlobalActiveMenuFnc ( null );
+			this.setGlobalActiveMenuFnc ( this.prevGAMF );
 			return;
 		}
 		if ( o.do === 'keyboard-key-down' ) {
 			return this.keyDown ( o.ev );
+		}
+		if ( o.do === 'being-dismissed' ) {
+			if ( typeof this.props.ctx.dismiss === 'string' ) {
+				this.props.upFnc ( { do: this.props.ctx.dismiss } ); }
+			return;
 		}
 	}	//	doAll()
 

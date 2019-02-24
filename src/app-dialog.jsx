@@ -15,6 +15,19 @@ class AppDialog extends React.Component {
 
 		this.click	= this.click.bind ( this );
 		this.doAll	= this.doAll.bind ( this );
+
+		this.state = {
+			menus:		[ 
+				<BurgerMenu eleId 		= { props.mnu.menuEleId }
+							style 		= {{ left:	props.mnu.menuX + 'px',
+											 top: 	props.mnu.menuY + 'px' }}
+							items		= { props.mnu.menuItems }
+							appFrameFnc	= { props.appFrameFnc }
+							screenFnc 	= { this.doAll }
+							upFnc		= { props.mnu.upFnc }
+							ctx			= { props.mnu.ctx } />
+			]
+		};
 	}
 
 	click ( ev ) {
@@ -24,8 +37,26 @@ class AppDialog extends React.Component {
 	doAll ( o ) {
 		if ( o.do === 'menu-dismiss' ) {
 			this.props.appFrameFnc ( o );
-			return;
-		}
+			return;	}
+		if ( o.do === 'push-sub-menu' ) {
+			let m = this.state.menus;
+			m.push ( 
+				<BurgerMenu eleId 		= { o.menuEleId }
+							style 		= {{ left:	o.menuX + 'px',
+											 top: 	o.menuY + 'px' }}
+							items		= { o.menuItems }
+							appFrameFnc	= { this.props.appFrameFnc }
+							screenFnc 	= { this.doAll }
+							upFnc		= { o.upFnc }
+							ctx			= { o.ctx }
+							isSubMenu	= { true } /> );
+			this.setState ( { menus: m } );
+			return; }
+		if ( o.do === 'pop-sub-menu' ) {
+			let m = this.state.menus;
+			m.pop();
+			this.setState ( { menus: m } );
+			return; }
 	}	//	doAll()
 
 	render() {
@@ -52,21 +83,21 @@ class AppDialog extends React.Component {
 					</div>
 				);
 			case 'menu':
-				let mnu = this.props.mnu;
+			//	let mnu = this.props.mnu;
 				return (
 					<div className 	= "rr-app-screen-dialog"
 						 onClick	= { this.click } >
-						<BurgerMenu eleId 		= { mnu.menuEleId }
+				{ /*	<BurgerMenu eleId 		= { mnu.menuEleId }
 									style 		= {{ left:	mnu.menuX + 'px',
 													 top: 	mnu.menuY + 'px' }}
 									items		= { mnu.menuItems }
 									appFrameFnc	= { this.props.appFrameFnc }
 									screenFnc 	= { this.doAll }
 									upFnc		= { mnu.upFnc }
-									ctx			= { mnu.ctx } />
+									ctx			= { mnu.ctx } />	*/}
+						{ this.state.menus }
 					</div>
-					
-				)
+				);
 			default:
 				return null;
 		}
