@@ -93,7 +93,8 @@ class Pane extends React.Component {
 
 			tabs:			props.tabs ? true : false,
 
-			hasFocus:		false
+			hasFocus:			false,
+			focusClass:			null,
 		};
 
 		this.tabsFnc 		= null;
@@ -109,6 +110,8 @@ class Pane extends React.Component {
 		this.bbFnc		= null;
 
 		this.isShowingBurgerMenu = false;
+
+		this.focusTimeoutId = 0;
 
 		if ( ! this.props.parentFnc ) {
 		//	this.props.frameFnc ( { do:		'set-call-down',
@@ -411,6 +414,9 @@ class Pane extends React.Component {
 	keyBurgerMenu ( o ) {
 	//	if ( this.bbFnc ) {
 	//		this.bbFnc ( { do: 'key-show' } ); 	}
+		if ( this.tabsFnc ) {
+			this.tabsFnc ( o );
+			return; }
 		if ( this.isShowingBurgerMenu ) {
 			this.props.frameFnc ( { do: 'menu-dismiss' } );
 			this.props.frameFnc ( { do: 'show-burger-menu' } );
@@ -418,6 +424,25 @@ class Pane extends React.Component {
 		}
 		this.burgerClick();
 	}	//	keyBurgerMenu()
+
+	focus ( o ) {
+		if ( this.focusTimeoutId ) {
+			window.clearTimeout ( this.focusTimeoutId );
+			this.focusTimeoutId = 0; }
+		this.setState ( { hasFocus: 	true,
+						  focusClass:	'rr-pane-focused-rect' } );
+		this.focusTimeoutId = window.setTimeout ( () => {
+			this.setState ( { hasFocus:   true,
+							  focusClass: 'rr-pane-focused-rect-transition' } );
+		}, 1000 );
+	}	//	focus()
+
+	focusNot ( o ) {
+		if ( this.focusTimeoutId ) {
+			window.clearTimeout ( this.focusTimeoutId );
+			this.focusTimeoutId = 0; }
+		this.setState ( { hasFocus: false } );
+	}	//	focusNot()
 
 //	sizeStartByTabPage() {
 //		let e = document.getElementById ( this.eleId );
@@ -607,16 +632,27 @@ class Pane extends React.Component {
 			return;
 		}
 		if ( o.do === 'focus' ) {
-			this.setState ( { hasFocus: true } );
+			if ( this.tabsFnc ) {
+				return this.tabsFnc ( o ); }
+			this.focus ( o );
 			return;
 		}
 		if ( o.do === 'not-focus' ) {
-			this.setState ( { hasFocus: false } );
+			if ( this.tabsFnc ) {
+				return this.tabsFnc ( o ); }
+			this.focusNot ( o );
 			return;
 		}
 		if ( o.do === 'key-burger-menu' ) {
 			this.keyBurgerMenu ( o );
 			return;
+		}
+		if ( o.do === 'cycle-tab-focus' ) {
+			if ( this.tabsFnc ) {			//	this pane holds the tabs ...
+				return this.tabsFnc ( o ); }
+			if ( this.props.tabsFnc ) {		//	this pane is that of a tab ...
+				return this.props.tabsFnc ( o ); }
+			return this.doAll;
 		}
 		if ( o.do === 'keyboard-key-down' ) {
 			if ( this.ccFnc ) {
@@ -869,7 +905,7 @@ class Pane extends React.Component {
 										 clientFnc	= { this.props.clientFnc } 
 										 tabs 		= { true } />
 							{ this.state.hasFocus && 
-								<div className = 'rr-focused-rect'/> }
+								<div className = { this.state.focusClass }/> }
 						</div>
 					);
 				}
@@ -892,7 +928,7 @@ class Pane extends React.Component {
 									   paneFnc		= { this.doAll } 
 									   frameFnc 	= { this.props.frameFnc } />
 						{ this.state.hasFocus && 
-							<div className = 'rr-focused-rect'/> }
+							<div className = { this.state.focusClass }/> }
 					</div>
 				); 
 			} else {
@@ -911,7 +947,7 @@ class Pane extends React.Component {
 										 clientFnc	= { this.props.clientFnc } 
 										 tabs 		= { true } />
 							{ this.state.hasFocus && 
-								<div className = 'rr-focused-rect'/> }
+								<div className = { this.state.focusClass }/> }
 						</div>
 					);
 				}
@@ -932,7 +968,7 @@ class Pane extends React.Component {
 									   paneFnc		= { this.doAll } 
 									   frameFnc 	= { this.props.frameFnc } />
 						{ this.state.hasFocus && 
-							<div className = 'rr-focused-rect'/> }
+							<div className = { this.state.focusClass }/> }
 					</div>
 				); 
 			}
@@ -973,7 +1009,7 @@ class Pane extends React.Component {
 							   paneFnc		= { this.doAll } 
 							   frameFnc 	= { this.props.frameFnc } />
 				{ this.state.hasFocus && 
-					<div className = 'rr-focused-rect'/> }
+					<div className = { this.state.focusClass }/> }
 			</div>
 		);
 	}   //  render()

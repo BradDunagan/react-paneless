@@ -69,9 +69,10 @@ class AppFrame extends Component {
 	//	//	Shift-Tab to cycle focus on not-iconized frames.
 	//	if ( ev.shiftKey ) {
 		//	Alt-F 	cycle focus on frames and the app title menu.
-		//	Alt-P 	cycle focus on panes withing a frame.
+		//	Alt-P 	cycle focus on panes within a frame.
 		//	Alt-B 	show burger menu. First focused pane's then a second
-		//			alt-B to show the focused frame's. 
+		//			alt-B to show the focused frame's.
+		//	Alt-T 	cycle tabs (if the focused pane is that of a tab). 
 		if ( ev.altKey ) {
 	//		console.log ( sW + ' shift ' + ev.key ); 
 			console.log ( sW + ' alt ' + ev.key ); 
@@ -94,12 +95,31 @@ class AppFrame extends Component {
 				return; } 
 			if ( key === 'P' ) {
 				if ( typeof this.focusedFrameFnc === 'function' ) {
-					this.focusedPaneFnc = this.focusedFrameFnc ( { do: 'cycle-pane-focus' } ); }
+					this.focusedPaneFnc = this.focusedFrameFnc ( 
+						{ do: 'cycle-pane-focus' } ); }
 				return; }
 			if ( key === 'B' ) {
 				if ( typeof this.focusedFrameFnc === 'function' ) {
 					this.focusedFrameFnc ( { do: 'key-burger-menu' } ); }
 				return; }
+			if ( key === 'T' ) {
+				if ( typeof this.focusedPaneFnc === 'function' ) {
+					let x = this.focusedPaneFnc ( { do: 'cycle-tab-focus' } ); 
+					if ( ! x ) {
+						this.focusedPaneFnc = null; 
+						return; }
+					if ( typeof x === 'function' ) {
+						this.focusedPaneFnc = x;
+						return; }
+					//	assume its a promise
+					this.focusedPaneFnc = null;
+					x.then ( fnc => {
+						this.focusedPaneFnc = fnc;
+					} )
+					.catch ( err => { 
+						console.log ( sW + ' error: ' + err );
+					} ); 
+				return; } }
 		}
 
 		if ( ev.key === 'Escape' ) {

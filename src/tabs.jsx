@@ -35,12 +35,17 @@ class Tabs extends Component {
 		this.setPageNamesState	= this.setPageNamesState.bind ( this );
 		this.selectTab			= this.selectTab.bind ( this );
 		this.addTab				= this.addTab.bind ( this );
+		this.getNameEleIdByTabId =
+			this.getNameEleIdByTabId.bind ( this );
 		this.nameTab			= this.nameTab.bind ( this );
 		this.nameTabName		= this.nameTabName.bind ( this );
 		this.oSetState2			= this.oSetState2.bind ( this );
 		this.oSetState			= this.oSetState.bind ( this );
 		this.pushState			= this.pushState.bind ( this );
 		this.submitState		= this.submitState.bind ( this );
+		this.startTabFocusTimer = this.startTabFocusTimer.bind ( this );
+		this.cycleTabFocus		= this.cycleTabFocus.bind ( this );
+		this.relayToPane		= this.relayToPane.bind ( this );
 
 		this.doAll = this.doAll.bind ( this );
 
@@ -53,6 +58,9 @@ class Tabs extends Component {
 		this.nameFncs = {};
 		this.names = {};
 		this.selectedNameEleId = null;
+
+		this.focusedTabId 		= 0;
+		this.tabFocusTimeoutId	= 0;
 
 		props.paneFnc ( { do:		'set-call-down',
 						  to:		'tabs',
@@ -99,18 +107,17 @@ class Tabs extends Component {
 	}	//	addTabPageName()
 
 	showPage ( tabId ) {
-	//	this.setState ( { page:  this.pages[tabId].page }, () => {
 		let self = this;
-		this.pushState ( null,
-						 { page:  this.pages[tabId].page }, 
-						 () => {
-			let page = self.pages[tabId];
-		//	if ( page.state ) {
-		//		page.paneFnc ( { do: 		'set-state',
-		//						state:		page.state } ); }
-			if ( page.paneFnc ) {
-				//	paneFnc() will load state from client app.
-				page.paneFnc ( { do: 'set-state' } ); }
+		return new Promise ( ( res, rej ) => {
+			this.pushState ( null,
+							{ page:  this.pages[tabId].page }, 
+							() => {
+				let page = self.pages[tabId];
+				if ( page.paneFnc ) {
+					//	paneFnc() will load state from client app.
+					page.paneFnc ( { do: 'set-state' } ); }
+				res ( 'ok' );
+			} );
 		} );
 	}	//	showPage()
 
@@ -151,7 +158,7 @@ class Tabs extends Component {
 		this.nameFncs[eleId] ( { do: 		'select',
 								 selected:	true } );
 		this.selectedNameEleId = eleId;
-		this.showPage ( this.names[eleId].tabId );
+		return this.showPage ( this.names[eleId].tabId );
 	}	//	selectTab()
 
 	addTab ( cb, paneId ) {
@@ -165,6 +172,14 @@ class Tabs extends Component {
 		} );
 	}	//	addTab()
 
+	getNameEleIdByTabId ( tabId ) {
+		for ( let eleId in this.names ) {
+			let d = this.names[eleId];
+			if ( d.tabId === tabId ) {
+				return eleId; } }
+		return null;
+	}
+	
 	nameTab ( o ) {
 		let curName = '';
 		for ( var eleId in this.names ) {
@@ -253,6 +268,75 @@ class Tabs extends Component {
 										//	componentDidUpdate()
 	}	//	submitState()
 
+	startTabFocusTimer() {
+		if ( this.tabFocusTimeoutId ) {
+			window.clearTimeout ( this.tabFocusTimeoutId ); }
+		this.tabFocusTimeoutId = window.setTimeout ( () => {
+			this.tabFocusTimeoutId = 0;
+		}, 4000 );
+	}	//	startTabFocusTimer()
+
+	cycleTabFocus() {
+		const sW = 'Tabs cycleTabFocus()';
+		let paneFnc, tabId, tabIds = Object.keys ( this.pages );
+		tabIds.forEach ( ( x, i ) => { 
+			tabIds[i] = Number.parseInt ( x ) } );
+		tabIds.sort();
+
+		let self = this;
+
+		function focus( i ) {
+			tabId = self.focusedTabId = tabIds[i]
+			let nameEleId = self.getNameEleIdByTabId ( tabId );
+			if ( ! nameEleId ) {
+				return Promise.reject ( 'nameEleId not found' ); }
+			console.log ( sW + ' focus():  i ' + i 
+								  + '  tabId ' + tabId
+							  + '  nameEleId ' + nameEleId );
+			return new Promise ( ( res, rej ) => {
+				self.selectTab ( nameEleId )
+					.then ( () => {
+						paneFnc = self.pages[tabId].paneFnc;
+						paneFnc ( { do: 'focus' } );
+						self.startTabFocusTimer();
+						res ( paneFnc );
+						return;
+					} );
+			} );
+		}
+
+		if ( this.focusedTabId === 0 ) {
+			if ( ! tabIds[0] ) {
+				return null; }
+			return focus ( 0 );
+		}
+		tabId = this.focusedTabId;
+		let i = tabIds.indexOf ( tabId );
+		if ( i >= 0 ) {
+			//	If the timeout has elapsed then show again which tab/pane has 
+			//	the focus, do not cycle. The user must repeat hitting the 
+			//	keyboard key faster in order to cycle.
+			if ( this.tabFocusTimeoutId === 0 ) {
+				return focus ( i ); }
+			this.pages[tabId].paneFnc ( { do: 'not-focus' } ); 
+			i++; 
+			if ( i >= tabIds.length ) {
+				i = 0; } }
+		else {
+			i = 0; }
+		if ( tabIds[i] ) {
+			return focus ( i );
+		}
+		return null;
+	}	//	cycleTabFocus()
+
+	relayToPane ( o ) {
+		if ( this.state.page ) {
+			let key = this.state.page.key;
+			if ( this.pages[key] && this.pages[key].paneFnc ) {
+				this.pages[key].paneFnc ( o ); } }
+	}	//	relayToPane()
+
 	doAll ( o ) {
 		let sW = 'Tabs doAll() ' + o.do;
 		if ( o.to ) {
@@ -320,6 +404,21 @@ class Tabs extends Component {
 		//		this.oState = o;
 		//		return; }
 			this.oSetState ( o );
+			return;
+		}
+		if ( o.do === 'focus' ) {
+			this.relayToPane ( o );
+			return;
+		}
+		if ( o.do === 'not-focus' ) {
+			this.relayToPane ( o );
+			return;
+		}
+		if ( o.do === 'cycle-tab-focus' ) {
+			return this.cycleTabFocus();
+		}
+		if ( o.do === 'key-burger-menu' ) {
+			this.relayToPane ( o );
 			return;
 		}
 	}	//	doAll()

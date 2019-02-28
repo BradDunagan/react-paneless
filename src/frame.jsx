@@ -63,6 +63,8 @@ class Frame extends React.Component {
 		this.nameFrame			= this.nameFrame.bind ( this );
 		this.nameFrameName		= this.nameFrameName.bind ( this );
 		this.setBorderColor		= this.setBorderColor.bind ( this );
+		this.startPaneFocusTimer =
+			this.startPaneFocusTimer.bind ( this );
 		this.cyclePaneFocus		= this.cyclePaneFocus.bind ( this );
 		this.refocusPane		= this.refocusPane.bind ( this );
 		this.unfocusPane		= this.unfocusPane.bind ( this );
@@ -146,14 +148,15 @@ class Frame extends React.Component {
 
 
 
-		this.iconSlot		= null;
-		this.contentState 	= null;
+		this.iconSlot					= null;
+		this.contentState 				= null;
 
-		this.mouseInTopPaneButtonBar = false;
+		this.mouseInTopPaneButtonBar 	= false;
 
-		this.focusedPaneId	= 0;
+		this.focusedPaneId				= 0;
+		this.paneFocusTimeoutId 		= 0;
 
-		this.isShowingBurgerMenu = false;
+		this.isShowingBurgerMenu 		= false;
 
 	}	//	constructor()
 
@@ -401,6 +404,14 @@ class Frame extends React.Component {
 			this.setState ( { style: style } );	}
 	}	//	setBorderColor()
 
+	startPaneFocusTimer() {
+		if ( this.paneFocusTimeoutId ) {
+			window.clearTimeout ( this.paneFocusTimeoutId ); }
+		this.paneFocusTimeoutId = window.setTimeout ( () => {
+			this.paneFocusTimeoutId = 0;
+		}, 4000 );
+	}	//	startPaneFocusTimer()
+
 	cyclePaneFocus ( o ) {
 		let panes = {};
 		this.rootPaneFnc ( { do: 	'enum-panes',
@@ -410,17 +421,30 @@ class Frame extends React.Component {
 		paneIds.forEach ( ( x, i ) => { 
 			paneIds[i] = Number.parseInt ( x ) } );
 		paneIds.sort();
+
+		let self = this;
+
+		function focus( i ) {
+			paneId  = self.focusedPaneId = paneIds[i]
+			paneFnc = panes[paneId];
+			paneFnc ( { do: 'focus' } );
+			self.startPaneFocusTimer();
+			return paneFnc;
+		}
+
 		if ( this.focusedPaneId === 0 ) {
 			if ( ! paneIds[0] ) {
 				return null; }
-			paneId  = this.focusedPaneId = paneIds[0]
-			paneFnc = panes[paneId];
-			paneFnc ( { do: 'focus' } );
-			return paneFnc;
+			return focus ( 0 );
 		}
 		paneId = this.focusedPaneId;
 		let i = paneIds.indexOf ( paneId );
 		if ( i >= 0 ) {
+			//	If the timeout has elapsed then show again which pane has 
+			//	the focus, do not cycle. The user must repeat hitting the 
+			//	keyboard key faster in order to cycle.
+			if ( this.paneFocusTimeoutId === 0 ) {
+				return focus ( i ); }
 			panes[paneId] ( { do: 'not-focus' } ); 
 			i++; 
 			if ( i >= paneIds.length ) {
@@ -428,10 +452,7 @@ class Frame extends React.Component {
 		else {
 			i = 0; }
 		if ( paneIds[i] ) {
-			paneId = this.focusedPaneId = paneIds[i]
-			paneFnc = panes[paneId];
-			paneFnc ( { do: 'focus' } );
-			return paneFnc;
+			return focus ( i );
 		}
 		return null;
 	}	//	cyclePaneFocus()
@@ -444,6 +465,7 @@ class Frame extends React.Component {
 			let paneFnc = panes[this.focusedPaneId];
 			if ( paneFnc ) {
 				paneFnc ( { do: 'focus' } ); 
+				this.startPaneFocusTimer();
 				return paneFnc; } }
 
 		let paneFnc, paneId, paneIds = Object.keys ( panes );
@@ -455,6 +477,7 @@ class Frame extends React.Component {
 		paneId = this.focusedPaneId = paneIds[0];
 		paneFnc = panes[paneId];
 		paneFnc ( { do: 'focus' } ); 
+		this.startPaneFocusTimer();
 		return paneFnc;
 	}	//	refocusPane()
 

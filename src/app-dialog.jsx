@@ -18,7 +18,8 @@ class AppDialog extends React.Component {
 
 		this.state = {
 			menus:		[ 
-				<BurgerMenu eleId 		= { props.mnu.menuEleId }
+				<BurgerMenu key 		= { props.mnu.menuEleId }
+							eleId 		= { props.mnu.menuEleId }
 							style 		= {{ left:	props.mnu.menuX + 'px',
 											 top: 	props.mnu.menuY + 'px' }}
 							items		= { props.mnu.menuItems }
@@ -41,7 +42,8 @@ class AppDialog extends React.Component {
 		if ( o.do === 'push-sub-menu' ) {
 			let m = this.state.menus;
 			m.push ( 
-				<BurgerMenu eleId 		= { o.menuEleId }
+				<BurgerMenu key 		= { o.menuEleId }
+							eleId 		= { o.menuEleId }
 							style 		= {{ left:	o.menuX + 'px',
 											 top: 	o.menuY + 'px' }}
 							items		= { o.menuItems }
