@@ -16,8 +16,9 @@ class AppDialog extends React.Component {
 		this.click	= this.click.bind ( this );
 		this.doAll	= this.doAll.bind ( this );
 
-		this.state = {
-			menus:		[ 
+		let menus = [];
+		if ( props.mnu ) {
+			menus.push (
 				<BurgerMenu key 		= { props.mnu.menuEleId }
 							eleId 		= { props.mnu.menuEleId }
 							style 		= {{ left:	props.mnu.menuX + 'px',
@@ -26,8 +27,9 @@ class AppDialog extends React.Component {
 							appFrameFnc	= { props.appFrameFnc }
 							screenFnc 	= { this.doAll }
 							upFnc		= { props.mnu.upFnc }
-							ctx			= { props.mnu.ctx } />
-			]
+							ctx			= { props.mnu.ctx } /> ); }
+		this.state = {
+			menus:		menus
 		};
 	}
 
