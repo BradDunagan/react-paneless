@@ -184,6 +184,7 @@ https://stackoverflow.com/questions/985134/absolute-positioning-elements-within-
 	text-align: 		center;
 	word-wrap:	 		break-word;
 	background-color:	white;
+	line-height:		12px;
 }
 
 .rr-frame-title-bar {
@@ -522,6 +523,21 @@ https://stackoverflow.com/questions/985134/absolute-positioning-elements-within-
 /*	flex-direction:     column;	dependent on split - therefore, in style 	*/
 	flex:               1 1 auto;
 	position:			relative;	/*	To make absolute work for btn bar.	*/
+}
+.pane-hsplitter {
+	flex:				1 1 auto;
+	min-width:			6px;
+	max-width:			6px;
+	height:				100%;
+	background-color:	lightgray;
+	cursor:				col-resize;
+}
+.pane-vsplitter {
+	flex:				1 1 auto;
+	min-height:			6px;
+	max-height:			6px;
+	background-color:	lightgray;
+	cursor:				row-resize;
 }
 .gutter {
 	background-color:		transparent;

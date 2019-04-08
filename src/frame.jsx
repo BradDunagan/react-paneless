@@ -268,6 +268,7 @@ class Frame extends React.Component {
 				titleBar: null,
 			} } );
 			self.iconSlot = null;
+			self.rootPaneFnc = null;
 		}, 50 );
 	}	//	iconize2()
 

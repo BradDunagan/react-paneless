@@ -69,6 +69,12 @@ class Pane extends React.Component {
 		this.splitPrep				= this.splitPrep.bind ( this );
 		this.splitHorz				= this.splitHorz.bind ( this );
 		this.splitVert				= this.splitVert.bind ( this );
+		this.hsplitterPointerDown	= this.hsplitterPointerDown.bind ( this );
+		this.hsplitterPointerUp		= this.hsplitterPointerUp.bind ( this );
+		this.hsplitterSlide			= this.hsplitterSlide.bind ( this );
+		this.vsplitterPointerDown	= this.vsplitterPointerDown.bind ( this );
+		this.vsplitterPointerUp		= this.vsplitterPointerUp.bind ( this );
+		this.vsplitterSlide			= this.vsplitterSlide.bind ( this );
 	//	this.sizeStartByTabPage		= this.sizeStartByTabPage.bind ( this );
 	//	this.sizeByTabPage			= this.sizeByTabPage.bind ( this );
 		this.propagateDown_SizeOp 	= this.propagateDown_SizeOp.bind ( this );
@@ -89,7 +95,11 @@ class Pane extends React.Component {
 			containerH0: 	0,
 		//	conatinerEle:	null,
 			splitHorz: 		null,
+			shLftStyle:		null,
+			shRgtStyle:		null,
 			splitVert:		null,
+			svTopStyle:		null,
+			svBotStyle:		null,
 
 			tabs:			props.tabs ? true : false,
 
@@ -97,9 +107,11 @@ class Pane extends React.Component {
 			focusClass:			null,
 		};
 
+		this.mounted 		= false;
+
 		this.tabsFnc 		= null;
 		this.tabPagePanes	= {};		//	keyed by tab ID
-		this.h0				= 0;		//	used when this is on a tab page
+	//	this.h0				= 0;		//	used when this is on a tab page
 
 		this.paneContentFnc 		= null;
 		this.correctPaneContentFnc	= null;
@@ -132,6 +144,12 @@ class Pane extends React.Component {
 									   tabId:		this.props.tabId,
 									   tabPaneFnc:	this.doAll } ); }
 		}
+
+		this.w0		= 0;
+		this.lftW0	= 0;
+		this.h0		= 0;
+		this.topH0	= 0;
+
 	}	//  constructor()
 
 	//	Data associated with any element.  Keys are the elements' id.
@@ -206,12 +224,6 @@ class Pane extends React.Component {
 	splitDrag() {
 		const sW = 'Pane ' + this.props.paneId + ' splitDrag()';
 	//	console.log ( sW );
-		let sizes = this.eleData[this.eleId].split.instance.getSizes();
-
-	//	if ( ! this.props.parentFnc ) {
-	//		this.props.frameFnc ( { do: 	'content-split-drag',
-	//								sizes: 	sizes } );
-	//	}
 		let cmd = { do: 'splitter-dragged' };
 		let sh = this.state.splitHorz;
 		if ( sh ) {
@@ -278,30 +290,38 @@ class Pane extends React.Component {
 			style: Object.assign ( { 
 				backgroundColor:	'lightgray' },
 				this.state.style ), 
+			containerStyle: {
+				flex:			'1 1 auto',
+				overflowX:		'hidden',
+				overflowY:		'hidden',
+				display:		'flex',
+				flexDirection:	'row' },
 			splitHorz: { 
 				left: {
 					eleId: 			this.eleId + '-lft-' + lftPaneId,
-					class: 			'split split-horizontal pane',
+					class: 			'pane',
 					paneId:			lftPaneId,
 					paneFnc: 		null,
 					contentState: 	null
 				},
 				right: {
 					eleId: 			this.eleId + '-rgt-' + rgtPaneId,
-					class: 			'split split-horizontal pane',	
+					class: 			'pane',	
 					paneId:			rgtPaneId,
 					paneFnc: 		null,
 				},
-				opts: {
-					direction:		'horizontal',
-					gutterSize: 	6,
-					minSize: 		20,
-					snapOffset: 	5,
-					cursor: 		'col-resize',
-					elementStyle:	this.myElementStyleFnc,
-					onDrag:			this.splitDrag
-				},
-				incomplete: 	true }
+				incomplete: 	true },
+			shLftStyle: { minWidth:			'100px', 
+						  maxWidth:			'100px', 
+						  flex:				'0 1 0',
+						  display:			'flex',
+						  flexDirection:	'row',
+						  userSelect:		'unset', },
+			shRgtStyle: { minWidth:			'2px',
+						  flex:				'1 0 0',
+						  userSelect:		'unset', 
+						  overflow:			'hidden', },
+
 		} );
 		return { lftPaneId: lftPaneId,
 				 rgtPaneId: rgtPaneId };
@@ -339,44 +359,245 @@ class Pane extends React.Component {
 				backgroundColor:	'lightgray' }, 
 				this.state.style ),
 			containerStyle: {
-				flex:		'1 1',
-				overflowX:	'hidden' },
+				flex:			'1 1 auto',
+				overflowX:		'hidden',
+				overflowY:		'hidden',
+				display:		'flex',
+				flexDirection:	'column' },
 			splitVert: { 
 				top: {
 					eleId: 			this.eleId + '-top-' + topPaneId,
-					class: 			'split split-vertical pane',
+					class: 			'pane',
 					paneId:			topPaneId,
 					paneFnc: 		null,
 					contentState: 	null
 				},
 				bottom: {
 					eleId: 			this.eleId + '-bot-' + botPaneId,
-					class: 			'split split-vertical pane',	
+					class: 			'pane',	
 					paneId:			botPaneId,
 					paneFnc: 		null,
 				},
-				opts: {
-					direction:		'vertical',
-					gutterSize: 	6,
-					minSize: 		20,
-					snapOffset: 	5,
-					cursor: 		'row-resize',
-					elementStyle:	this.myElementStyleFnc,
-					onDrag:			this.splitDrag
-				},
-				incomplete: 	true, }
+				incomplete: 	true, },
+			svTopStyle: { minHeight:		'100px', 
+						  maxHeight:		'100px', 
+						  flex:				'0 1 0',
+						  display:			'flex',
+						  flexDirection:	'column',
+						  userSelect:		'unset', },
+			svBotStyle: { minHeight:	'2px',
+						  flex:			'1 0 0',
+						  userSelect:	'unset',
+						  overflow:		'hidden', },
 		} );
 		return { topPaneId: topPaneId,
 				 botPaneId: botPaneId };
 	}	//	splitVert()
 
+	hsplitterPointerDown ( evt ) {
+		const sW = 'Pane hsplitterPointerDown()';
+		console.log ( sW );
+		let e = document.getElementById ( this.eleId + '-hsplitter' );
+		let lft = this.state.shLftStyle;
+		let rgt = this.state.shRgtStyle;
+		let lftMaxWidth =   e.parentElement.clientWidth 
+						  - e.offsetWidth 
+						  - Number.parseInt ( rgt.minWidth );
+		this.setState ( { shLftStyle: { 
+			minWidth: 		lft.minWidth,
+			maxWidth: 		lftMaxWidth + 'px',
+			flex:			lft.flex,
+		    display:		lft.display,
+		    flexDirection:	lft.flexDirection,
+		    userSelect:		'none' } } );
+		this.setState ( { shRgtStyle: { 
+			minWidth: 		rgt.minWidth,
+		    flex:			rgt.flex,
+		    padding:		rgt.padding,
+		    userSelect:		'none',
+			overflow:		rgt.overflow } } );
+		e.onpointermove = this.hsplitterSlide;
+		e.setPointerCapture ( evt.pointerId );
+	}	//	hsplitterPointerDown()
+
+	vsplitterPointerDown ( evt ) {
+		const sW = 'Pane vsplitterPointerDown()';
+		console.log ( sW );
+		let e = document.getElementById ( this.eleId + '-vsplitter' );
+		let top = this.state.svTopStyle;
+		let bot = this.state.svBotStyle;
+		let topMaxHeight =   e.parentElement.clientHeight 
+						   - e.offsetHeight 
+						   - Number.parseInt ( bot.minHeight );
+		this.setState ( { svTopStyle: { 
+			minHeight: 		top.minHeight,
+			maxHeight: 		topMaxHeight + 'px',
+			flex:			top.flex,
+		    display:		top.display,
+		    flexDirection:	top.flexDirection,
+		    userSelect:		'none' } } );
+		this.setState ( { svBotStyle: { 
+			minHeight: 		bot.minHeight,
+		    flex:			bot.flex,
+		    padding:		bot.padding,
+		    userSelect:		'none',
+			overflow:		bot.overflow } } );
+		e.onpointermove = this.vsplitterSlide;
+		e.setPointerCapture ( evt.pointerId );
+	}	//	vsplitterPointerDown()
+
+	hsplitterPointerUp ( evt ) {
+		const sW = 'Pane hsplitterPointerUp()';
+		console.log ( sW );
+		let e = document.getElementById ( this.eleId + '-hsplitter' );
+		let lft = this.state.shLftStyle;
+		let rgt = this.state.shRgtStyle;
+		let { minWidth, maxWidth } = lft;
+		this.setState ( { shLftStyle: { 
+			minWidth: 		minWidth,
+		    maxWidth: 		maxWidth,
+			flex:			lft.flex,
+		    display:		lft.display,
+		    flexDirection:	lft.flexDirection,
+		    userSelect:		'unset' } } );
+		this.setState ( { shRgtStyle: { 
+			minWidth: 		rgt.minWidth,
+		    flex:			rgt.flex,
+		    padding:		rgt.padding,
+		    userSelect:		'unset',
+			overflow:		rgt.overflow } } );
+		e.onpointermove = null;
+		e.releasePointerCapture ( evt.pointerId );
+	}	//	hsplitterPointerUp()
+
+	vsplitterPointerUp ( evt ) {
+		const sW = 'Pane vsplitterPointerUp()';
+		console.log ( sW );
+		let e = document.getElementById ( this.eleId + '-vsplitter' );
+		let top = this.state.svTopStyle;
+		let bot = this.state.svBotStyle;
+		let { minHeight, maxHeight } = top;
+		this.setState ( { svTopStyle: { 
+			minHeight: 		minHeight,
+		    maxHeight: 		maxHeight,
+			flex:			top.flex,
+		    display:		top.display,
+		    flexDirection:	top.flexDirection,
+		    userSelect:		'unset' } } );
+		this.setState ( { svBotStyle: { 
+			minHeight: 		bot.minHeight,
+		    flex:			bot.flex,
+		    padding:		bot.padding,
+		    userSelect:		'unset',
+			overflow:		bot.overflow } } );
+		e.onpointermove = null;
+		e.releasePointerCapture ( evt.pointerId );
+	}	//	vsplitterPointerUp()
+
+	hsplitterSlide ( e ) {
+		const sW = 'Pane hsplitterSlide()';
+	//	console.log ( sW + ':  movementX ' + e.movementX );
+		let lft = this.state.shLftStyle;
+		let { minWidth, maxWidth } = lft;
+		let maxW =  Number.parseInt ( maxWidth );
+		let lftW =  Number.parseInt ( minWidth );
+			lftW += e.movementX / 2;
+		if ( lftW > maxW ) {
+			lftW = maxW; };
+		this.setState ( { shLftStyle: { 
+			minWidth: 		lftW + 'px',
+		    maxWidth: 		maxWidth,	
+			flex:			lft.flex,
+		    display:		lft.display,
+			flexDirection:	lft.flexDirection,
+			userSelect:		'none' } }, () => {
+			this.splitDrag() } );
+	}	//	hsplitterSlide()
+
+	vsplitterSlide ( e ) {
+		const sW = 'Pane vsplitterSlide()';
+	//	console.log ( sW + ':  movementY ' + e.movementY );
+		let top = this.state.svTopStyle;
+		let { minHeight, maxHeight } = top;
+		let maxH =  Number.parseInt ( maxHeight );
+		let topH =  Number.parseInt ( minHeight );
+			topH += e.movementY / 2;
+		if ( topH > maxH ) {
+			topH = maxH; };
+		this.setState ( { svTopStyle: { 
+			minHeight: 		topH + 'px',
+		    maxHeight: 		maxHeight,	
+			flex:			top.flex,
+		    display:		top.display,
+			flexDirection:	top.flexDirection,
+			userSelect:		'none' } }, () => {
+			this.splitDrag() } );
+	}	//	vsplitterSlide()
+
 	propagateDown_SizeOp ( o ) {
+		const sW = 'Pane propagateDown_SizeOp() ' + o.do;
+	//	console.log ( sW );
+		if ( ! this.mounted ) {
+			console.log ( sW + ' Error: not mounted' );
+			return; }
+		let e    = document.getElementById ( this.eleId );
+		if ( ! e ) {
+			console.log ( sW + ' Error: no element' );
+			return; }
 		let sh = this.state.splitHorz;
 		if ( sh ) {
+			while ( o.do === 'size-start' ) {
+				let lft  = this.state.shLftStyle;
+				this.w0  = e.clientWidth;
+				this.h0  = e.clientHeight;
+				this.lftW0 = Number.parseInt ( lft.minWidth); 
+				break; }
+			while ( o.do === 'size' ) {
+				let w    = e.clientWidth;
+				let lft  = this.state.shLftStyle;
+				let wp   = this.lftW0 / this.w0;
+				let lftW = Math.round ( w * wp );
+			//	console.log ( sW + ': w ' + w 
+			//					 + '  wp ' + wp 
+			//					 + '  lftW ' + lftW );
+				if ( ! Number.isSafeInteger ( lftW ) ) {
+					break; }
+				this.setState ( { shLftStyle: {
+					minWidth: 		lftW + 'px',
+					maxWidth: 		lft.maxWidth,	
+					flex:			lft.flex,
+					display:		lft.display,
+					flexDirection:	lft.flexDirection,
+					userSelect:		'unset', } } ); 
+				break; }
 			sh.left.paneFnc ( o );
 			sh.right.paneFnc ( o );	}
 		let sv = this.state.splitVert;
 		if ( sv ) {
+			while ( o.do === 'size-start' ) {
+				let top  = this.state.svTopStyle;
+				this.w0  = e.clientWidth;
+				this.h0  = e.clientHeight;
+				this.topH0 = Number.parseInt ( top.minHeight ); 
+				break; }
+			while ( o.do === 'size' ) {
+				let h    = e.clientHeight;
+				let top  = this.state.svTopStyle;
+				let hp   = this.topH0 / this.h0;
+				let topH = Math.round ( h * hp );
+			//	console.log ( sW + ': h ' + h 
+			//					 + '  hp ' + hp 
+			//					 + '  topH ' + topH );
+				if ( ! Number.isSafeInteger ( topH ) ) {
+					break; }
+				this.setState ( { svTopStyle: {
+					minHeight: 		topH + 'px',
+					maxHeight: 		top.maxHeight,	
+					flex:			top.flex,
+					display:		top.display,
+					flexDirection:	top.flexDirection,
+					userSelect:		'unset', } } ); 
+				break; }
 			sv.top.paneFnc ( o );
 			sv.bottom.paneFnc ( o ); }
 	//	if ( this.tabPagesFnc ) {
@@ -390,11 +611,9 @@ class Pane extends React.Component {
 
 		}
 		if ( this.ccFnc ) {
-			let e = document.getElementById ( this.eleId );
-			if ( e ) {
-				o.paneW = e.clientWidth;
-				o.paneH = e.clientHeight;
-				this.ccFnc ( o ); } }
+			o.paneW = e.clientWidth;
+			o.paneH = e.clientHeight;
+			this.ccFnc ( o ); }
 	}	//	propagateDown_SizeOp()
 
 	enumPanes ( o ) {
@@ -668,16 +887,16 @@ class Pane extends React.Component {
 				sh.left.contentState = sh.left.paneFnc ( o );
 				sh.left.paneFnc = null;
 				sh.right.contentState = sh.right.paneFnc ( o );
-				sh.right.paneFnc = null;
-				sh.opts.elementStyle = null;
-				sh.opts.onDrag = null; }
+				sh.right.paneFnc = null; }
+			//	sh.opts.elementStyle = null;
+			//	sh.opts.onDrag = null; }
 			if ( sv ) {
 				sv.top.contentState = sv.top.paneFnc ( o );
 				sv.top.paneFnc = null;
 				sv.bottom.contentState = sv.bottom.paneFnc ( o );
-				sv.bottom.paneFnc = null;
-				sv.opts.elementStyle = null;
-				sv.opts.onDrag = null; }
+				sv.bottom.paneFnc = null; }
+			//	sv.opts.elementStyle = null;
+			//	sv.opts.onDrag = null; }
 			if ( (! sh) && (! sv) && this.ccFnc ) {
 				state.ccState = this.ccFnc ( o );
 			} else {
@@ -686,12 +905,19 @@ class Pane extends React.Component {
 				state.tabsState = this.tabsFnc ( o );
 			} else {
 				state.tabsState = false; }
-			state.eleData = {};
-			let d = this.eleData[pe.id];
-			if ( d && d.split ) {
-				state.eleData.splitSizes = d.split.instance.getSizes(); }
-			else {
-				state.eleData.splitSizes = null; }
+
+		//	state.eleData = {};
+		//	let d = this.eleData[pe.id];
+		//	if ( d && d.split ) {
+		//		state.eleData.splitSizes = d.split.instance.getSizes(); }
+		//	else {
+		//		state.eleData.splitSizes = null; }
+				
+		//	state.split = {
+		//		w0:		this.w0,
+		//		lftW0:	this.lftW0,
+		//		h0:		this.h0,
+		//		topH0:	this.topH0 };
 
 			this.props.clientFnc ( { do: 		'store-state',
 									 paneId: 	this.props.paneId,
@@ -709,12 +935,12 @@ class Pane extends React.Component {
 			if ( (! this.props.parentFnc) && (sh || sv) ) {
 				this.props.frameFnc ( { do: 'clear-pane-btn-bars' } ); }
 			if ( sh ) {
-				sh.opts.elementStyle	= this.myElementStyleFnc;
-				sh.opts.onDrag			= this.splitDrag;
+			//	sh.opts.elementStyle	= this.myElementStyleFnc;
+			//	sh.opts.onDrag			= this.splitDrag;
 				sh.incomplete			= true; }
 			if ( sv ) {
-				sv.opts.elementStyle	= this.myElementStyleFnc;
-				sv.opts.onDrag			= this.splitDrag;
+			//	sv.opts.elementStyle	= this.myElementStyleFnc;
+			//	sv.opts.onDrag			= this.splitDrag;
 				sv.incomplete			= true; }
 			if ( (! sh) && (! sv) ) {
 				if ( this.ccFnc ) {
@@ -732,8 +958,13 @@ class Pane extends React.Component {
 			}
 			
 			let d = this.eleData[this.eleId] = {};
-			if ( state.eleData.splitSizes ) {
-				d.splitSizes = state.eleData.splitSizes; }
+		//	if ( state.eleData.splitSizes ) {
+		//		d.splitSizes = state.eleData.splitSizes; }
+
+		//	this.w0 	= state.split.w0;
+		//	this.lftW0 	= state.split.lftW0;
+		//	this.h0 	= state.split.h0;
+		//	this.topH0 	= state.split.topH0;
 
 			let tabsState = state.tabsState;
 			delete state.tabsState;
@@ -829,55 +1060,79 @@ class Pane extends React.Component {
 		//	When split horizontally - For example -
 		if ( this.state.splitHorz ) {
 		//	console.log ( 'Pane render() this.state.splitHorz )' );
+			let style = null;
+			if ( this.props.parentFnc ) {
+				style = this.props.style; }
+			else {
+				style = this.state.style; }
 			let lft = this.state.splitHorz.left;
 			let rgt = this.state.splitHorz.right;
 			return (
 				<div id 		= { this.eleId }
 					 className 	= { this.class }
-					 style 		= { this.state.style } >
-					<Pane frameId 		= { this.props.frameId }
-					   	  paneId		= { lft.paneId }
-						  eleId 		= { lft.eleId }
-						  class 		= { lft.class }
-						  peId 			= { this.props.peId }
-						  frameFnc		= { this.props.frameFnc } 
-						  parentFnc 	= { this.doAll } 
-						  atFrameTop	= { this.props.atFrameTop }
-						  clientFnc		= { this.props.clientFnc } />
-					<Pane frameId 		= { this.props.frameId }
-					   	  paneId		= { rgt.paneId }
-						  eleId 		= { rgt.eleId } 
-						  class 		= { rgt.class }
-						  peId 			= { this.props.peId }
-						  frameFnc		= { this.props.frameFnc } 
-						  parentFnc 	= { this.doAll } 
-						  atFrameTop	= { this.props.atFrameTop } 
-						  clientFnc		= { this.props.clientFnc } />
+					 style 		= { style } >
+					<div style = { this.state.containerStyle } >
+						<Pane frameId 		= { this.props.frameId }
+						   	  paneId		= { lft.paneId }
+							  eleId 		= { lft.eleId }
+							  style			= { this.state.shLftStyle }
+							  class 		= { lft.class }
+							  peId 			= { this.props.peId }
+							  frameFnc		= { this.props.frameFnc } 
+							  parentFnc 	= { this.doAll } 
+							  atFrameTop	= { this.props.atFrameTop }
+							  clientFnc		= { this.props.clientFnc } />
+						<div id				= { this.eleId + '-hsplitter' }
+							 className		= 'pane-hsplitter' 
+					 		 onPointerDown	= { this.hsplitterPointerDown }
+							 onPointerUp	= { this.hsplitterPointerUp } />
+						<Pane frameId 		= { this.props.frameId }
+						   	  paneId		= { rgt.paneId }
+							  eleId 		= { rgt.eleId } 
+							  style			= { this.state.shRgtStyle }
+							  class 		= { rgt.class }
+							  peId 			= { this.props.peId }
+							  frameFnc		= { this.props.frameFnc } 
+							  parentFnc 	= { this.doAll } 
+							  atFrameTop	= { this.props.atFrameTop } 
+							  clientFnc		= { this.props.clientFnc } />
+					</div>
 				</div>
 			); }
 
 		if ( this.state.splitVert ) {
 			diag ( [2], sW + ' splitVert' );
+			let style = null;
+			if ( this.props.parentFnc ) {
+				style = this.props.style; }
+			else {
+				style = this.state.style; }
 			let sv = this.state.splitVert;
 			let top = sv.top;
 			let bot = sv.bottom;
 			return (
 				<div id 		= { this.eleId }
 					 className 	= { this.class }
-					 style 		= { this.state.style } >
+					 style 		= { style } >
 					<div style = { this.state.containerStyle } >
 						<Pane frameId 		= { this.props.frameId }
 					   	  	  paneId		= { top.paneId }
 							  eleId 		= { top.eleId }
+							  style			= { this.state.svTopStyle }
 							  class 		= { top.class }
 							  peId 			= { this.props.peId }
 							  frameFnc		= { this.props.frameFnc } 
 							  parentFnc 	= { this.doAll } 
 							  atFrameTop	= { this.props.atFrameTop }
 							  clientFnc		= { this.props.clientFnc } />
+						<div id				= { this.eleId + '-vsplitter' }
+							 className		= 'pane-vsplitter' 
+					 		 onPointerDown	= { this.vsplitterPointerDown }
+							 onPointerUp	= { this.vsplitterPointerUp } />
 						<Pane frameId 		= { this.props.frameId }
 					   	  	  paneId		= { bot.paneId }
 							  eleId 		= { bot.eleId } 
+							  style			= { this.state.svBotStyle }
 							  class 		= { bot.class }
 							  peId 			= { this.props.peId }
 							  frameFnc		= { this.props.frameFnc } 
@@ -895,7 +1150,7 @@ class Pane extends React.Component {
 					return (
 						<div id 		= { this.eleId }
 							className 	= { this.class }
-							style 		= { this.state.style } >
+							style 		= { this.props.style } >
 							<PaneContent eleId 		= { this.contentEleId } 
 										 peId		= { this.props.peId }
 										 frameId 	= { this.props.frameId }
@@ -913,7 +1168,7 @@ class Pane extends React.Component {
 				return (
 					<div id 		= { this.eleId }
 						 className 	= { this.class }
-						 style 		= { this.state.style } >
+						 style 		= { this.props.style } >
 						<PaneContent eleId 		= { this.contentEleId }
 									 peId		= { this.props.peId }
 									 frameId 	= { this.props.frameId }
@@ -937,7 +1192,7 @@ class Pane extends React.Component {
 					return (
 						<div id 		= { this.eleId }
 							className 	= { this.class }
-							style 		= { this.state.style } >
+							style 		= { this.props.style } >
 							<PaneContent eleId 		= { this.contentEleId } 
 										 peId		= { this.props.peId }
 										 frameId 	= { this.props.frameId }
@@ -955,7 +1210,7 @@ class Pane extends React.Component {
 				return (
 					<div id 		= { this.eleId }
 						 className 	= { this.class }
-						 style 		= { this.state.style } >
+						 style 		= { this.props.style } >
 						<PaneContent eleId 		= { this.contentEleId }
 									 peId		= { this.props.peId }
 									 frameId 	= { this.props.frameId }
@@ -1022,6 +1277,7 @@ class Pane extends React.Component {
 			this.props.frameFnc ( { do:		'set-call-down',
 									to:		'root-pane',
 									fnc:	this.doAll } ); }
+		this.mounted = true;
 	}	//	componentDidMount()
 
 	componentDidUpdate() {
@@ -1029,82 +1285,63 @@ class Pane extends React.Component {
 		diag ( [1, 2], sW );
 		let sh = this.state.splitHorz;
 		if ( sh && sh.incomplete ) {
-			let pe = document.getElementById ( this.eleId );
+		//	let pe = document.getElementById ( this.eleId );
 
-			//  Put the copied contents in the left <div>.
-			let lft = document.getElementById ( sh.left.eleId );
+		//	//  Put the copied contents in the left <div>.
+		//	let lft = document.getElementById ( sh.left.eleId );
 
-			//	Some content in the right side pane.
-			let rgt = document.getElementById ( sh.right.eleId );
+		//	//	Some content in the right side pane.
+		//	let rgt = document.getElementById ( sh.right.eleId );
 
-			//	Add the gutter <div>.
-			let d = this.eleData[pe.id];
-			if ( d && d.splitSizes )
-				sh.opts.sizes = d.splitSizes;
-			let split = Split ( ['#' + sh.left.eleId, 
-								 '#' + sh.right.eleId], 
-								sh.opts );
+		//	//	Add the gutter <div>.
+		//	let d = this.eleData[pe.id];
+		//	if ( d && d.splitSizes )
+		//		sh.opts.sizes = d.splitSizes;
+		//	let split = Split ( ['#' + sh.left.eleId, 
+		//						 '#' + sh.right.eleId], 
+		//						sh.opts );
 
-			//	Remember the split instance.
-			if ( ! this.eleData[pe.id] )
-				this.eleData[pe.id] = {};
-			this.eleData[pe.id].split = { instance: split };
+		//	//	Remember the split instance.
+		//	if ( ! this.eleData[pe.id] )
+		//		this.eleData[pe.id] = {};
+		//	this.eleData[pe.id].split = { instance: split };
 
 			this.propagateDown_SizeOp ( { do: 'splitter-dragged' } );
 
-			sh.left.paneFnc ( { do:	'set-state'} )
+			sh.left.paneFnc ( { do: 'set-state'} )
 
-			sh.right.paneFnc ( { do:	'set-state'} )
+			sh.right.paneFnc ( { do: 'set-state'} )
 
-		//	if ( this.props.atFrameTop ) {
-		//		this.props.frameFnc ( { do: 		'add-pane-btn-bar',
-		//							  	paneEleId:	sh.left.eleId,
-		//								paneFnc:	sh.left.paneFnc,
-		//								paneLeft:	lft.offsetLeft,
-		//								paneWidth:	lft.offsetWidth } );
-		//		this.props.frameFnc ( { do: 		'add-pane-btn-bar',
-		//							  	paneEleId:	sh.right.eleId,
-		//								paneFnc:	sh.right.paneFnc,
-		//								paneLeft:	rgt.offsetLeft,
-		//								paneWidth:	rgt.offsetWidth } );
-		//	}
 			sh.incomplete = false
 		}
 		let sv = this.state.splitVert;
 		if ( sv && sv.incomplete ) {
-			let pe = document.getElementById ( this.eleId );
+		//	let pe = document.getElementById ( this.eleId );
 
-			//  Put the copied contents in the top <div>.
-			let top = document.getElementById ( sv.top.eleId );
+		//	//  Put the copied contents in the top <div>.
+		//	let top = document.getElementById ( sv.top.eleId );
 
-			//	Some content in the bottom side pane.
-			let bot = document.getElementById ( sv.bottom.eleId );
+		//	//	Some content in the bottom side pane.
+		//	let bot = document.getElementById ( sv.bottom.eleId );
 
-			//	Add the gutter <div>.
-			let d = this.eleData[pe.id];
-			if ( d && d.splitSizes )
-				sv.opts.sizes = d.splitSizes;
-			let split = Split ( ['#' + sv.top.eleId, 
-								 '#' + sv.bottom.eleId], 
-								sv.opts );
+		//	//	Add the gutter <div>.
+		//	let d = this.eleData[pe.id];
+		//	if ( d && d.splitSizes )
+		//		sv.opts.sizes = d.splitSizes;
+		//	let split = Split ( ['#' + sv.top.eleId, 
+		//						 '#' + sv.bottom.eleId], 
+		//						sv.opts );
 
-			//	Remember the split instance.
-			if ( ! this.eleData[pe.id] )
-				this.eleData[pe.id] = {};
-			this.eleData[pe.id].split = { instance: split };
+		//	//	Remember the split instance.
+		//	if ( ! this.eleData[pe.id] )
+		//		this.eleData[pe.id] = {};
+		//	this.eleData[pe.id].split = { instance: split };
 
 			this.propagateDown_SizeOp ( { do: 'splitter-dragged' } );
-			let topSplit = sv.top.paneFnc ( { do:	'set-state'} )
+
+			sv.top.paneFnc ( { do:	'set-state'} )
 
 			sv.bottom.paneFnc ( { do:	'set-state'} )
-
-		//	if ( this.props.atFrameTop && ! topSplit ) {
-		//		this.props.frameFnc ( { do: 		'add-pane-btn-bar',
-		//							  	paneEleId:	sv.top.eleId,
-		//								paneFnc:	sv.top.paneFnc,
-		//								paneLeft:	top.offsetLeft,
-		//								paneWidth:	top.offsetWidth } );
-		//	}
 
 			sv.incomplete = false
 		}
