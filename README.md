@@ -1,6 +1,9 @@
 # paneless
 
-> From flex-c
+A minimal window manager as a React-JS component.
+
+Example of a Paneless Frame in an app I am working on -
+
 
 [![NPM](https://img.shields.io/npm/v/paneless.svg)](https://www.npmjs.com/package/paneless) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
