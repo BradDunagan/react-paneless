@@ -564,8 +564,8 @@ https://stackoverflow.com/questions/985134/absolute-positioning-elements-within-
     position: 			absolute;
     margin: 			1px;
 	background-color: 	transparent;
-    width: 				calc(100% - 6px);
-    height: 			calc(100% - 6px);
+    width: 				calc(100% - 4px);
+    height: 			calc(100% - 4px);
 	pointer-events: 	none;
 	border:				solid 1px;
 	border-color:		rgba(0,0,255,255);
@@ -575,8 +575,8 @@ https://stackoverflow.com/questions/985134/absolute-positioning-elements-within-
     position: 					absolute;
     margin: 					1px;
 	background-color: 			transparent;
-    width: 						calc(100% - 6px);
-    height: 					calc(100% - 6px);
+    width: 						calc(100% - 4px);
+    height: 					calc(100% - 4px);
 	pointer-events: 			none;
 	border:						solid 1px;
 	border-color:				rgba(0,0,255,0);

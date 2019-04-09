@@ -21,27 +21,18 @@ class ContentExample1 extends Component {
 
 		this.state = {
 			style:	{
-				visibility:	'hidden',		//	Until 'init-new' or possibly
-			},								//	'set-state'.
+				visibility:		'hidden',	//	Until 'init-new' or possibly
+											//	'set-state'.
+				paddingLeft:	'10px',
+			},
 			text:		'',
 			nClicks:    '',
 		};
 
-	//	this.data = {
-	//		nClicks:    0,
-	//	};
-
-	//	this.props.appContentFnc ( { do:        'set-call-down',
-	//								 to:        'client-content',
-	//								 frameId:   this.props.frameId,
-	//								 paneId:	this.props.paneId,
-	//								 fnc:       this.doAll } );
 	}	//	constructor()
 
 	click ( ev ) {
 		const sW = 'ContentExample1 click()';
-	//	this.data.nClicks += 1;
-	//	console.log ( sW + ': nClicks ' + this.data.nClicks );
 		let nClicks = this.state.nClicks;
 		this.setState ( { nClicks: ++nClicks } );
 	//	console.log ( sW + ': nClicks ' + nClicks );
@@ -81,7 +72,8 @@ class ContentExample1 extends Component {
 		if ( o.do === 'init-new' ) {
 			this.setState ( {
 				style: {
-					visibility:	'visible',
+					visibility:		'visible',
+					paddingLeft:	'10px'
 				},
 				text:		'ContentExample1-' + ++example1Count,
 				nClicks:    0,
@@ -99,10 +91,6 @@ class ContentExample1 extends Component {
 				this.setState ( o.state.state ); }
 			return;
 		}
-	//	if ( o.do === 'pane-burger-click' ) {
-	//		this.burgerClick ( o );
-	//		return;
-	//	}
 		if ( o.do === 'append-menu-items' ) {
 			let a = o.menuItems;
 			a.push ( { type: 'item', text: 'Client' } );

@@ -286,6 +286,9 @@ class Pane extends React.Component {
 			paneId:		rgtPaneId
 		} );
 
+		let e  = document.getElementById ( this.eleId );
+		let w2 = e.clientWidth / 2;
+
 		this.setState ( { 
 			style: Object.assign ( { 
 				backgroundColor:	'lightgray' },
@@ -311,8 +314,8 @@ class Pane extends React.Component {
 					paneFnc: 		null,
 				},
 				incomplete: 	true },
-			shLftStyle: { minWidth:			'100px', 
-						  maxWidth:			'100px', 
+			shLftStyle: { minWidth:			w2 + 'px',
+						  maxWidth:			w2 + 'px',		//	for now
 						  flex:				'0 1 0',
 						  display:			'flex',
 						  flexDirection:	'row',
@@ -354,6 +357,9 @@ class Pane extends React.Component {
 			paneId:		botPaneId
 		} );
 
+		let e  = document.getElementById ( this.eleId );
+		let h2 = e.clientHeight / 2;
+
 		this.setState ( { 
 			style: Object.assign ( { 
 				backgroundColor:	'lightgray' }, 
@@ -379,8 +385,8 @@ class Pane extends React.Component {
 					paneFnc: 		null,
 				},
 				incomplete: 	true, },
-			svTopStyle: { minHeight:		'100px', 
-						  maxHeight:		'100px', 
+			svTopStyle: { minHeight:		h2 + 'px',
+						  maxHeight:		h2 + 'px',		//	for now
 						  flex:				'0 1 0',
 						  display:			'flex',
 						  flexDirection:	'column',

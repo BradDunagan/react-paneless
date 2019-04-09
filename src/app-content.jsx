@@ -395,8 +395,7 @@ class AppContent extends React.Component {
 				</div>											*/ }
 				<div className = "rr-mird-container">
 					<span className = "rr-mird-span">
-						<p>- robots want instruction -</p>
-						<p>- minimal impedance robot development -</p>
+						<p>- something profound -</p>
 					</span>
 				</div>
 				{this.state.frames}

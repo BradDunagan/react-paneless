@@ -481,7 +481,7 @@ class App extends Component {
 
 	render() {
 		return (
-			<AppFrame appTitle		= 'Robot Records'
+			<AppFrame appTitle		= 'Paneless App Title'
 					  appTitleClick	= { this.clickAppTitle }
 					  clientFnc		= { this.doAll } />
 		);
