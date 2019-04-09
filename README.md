@@ -6,9 +6,9 @@
 
 A minimal window manager that may be included in your ReactJS app.
 
-I am developing paneless to use in a larger app. I want to be able to display multiple, overlapping windows. Each "window" is called a _frame_. Here is a screenshot of one frame of the app with five _panes_.
+I am developing paneless to use in a larger app. I want to be able to display multiple, overlapping windows. Each "window" is called a _frame_. Here is a screenshot of one frame of my app with five _panes_.
 
-- All app content is rendered in a pane.
+- All app content is rendered in panes.
 
 - Frames may be minimized to a thumbnail size.
 
@@ -22,7 +22,11 @@ I am developing paneless to use in a larger app. I want to be able to display mu
 
 - This library supports persisting layouts.
 
-- Blue lines indicate the frame/pane with user focus. You can navigate around fames and panes with the Alt-f and Alt-p keys. Alt-b will activate the focused pane's menu. Hitting Alt-b again will activate the associated frame's menu. Arrow keys are used to navigate the menus and Escape (or clicking anywhere outside) closes the menu. The blue outline indicating the focused pane appears only for a few seconds and then fades so as not to obscure the app's content.
+- Blue lines indicate the frame/pane with user focus. You can navigate around fames and panes with the Alt-f and Alt-p keys. Alt-b will activate the focused pane's menu. Hitting Alt-b again will activate the associated frame's menu. Arrow keys are used to navigate the menu's items and Escape (or clicking anywhere outside) closes the menu.
+
+- The blue outline indicating the focused pane appears only for a few seconds and then fades so as not to obscure the app's content in that pane.
+
+- A frame is sized with the mouse by hovering around its lower right corner.
 
 <p align="center"> <img src="/images/RR-App-ScreenShot-002.png?raw=true alt="RR App Screenshot" /> </p>
 
