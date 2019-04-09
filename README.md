@@ -18,7 +18,8 @@ This repository includes an example app. Here is a screenshot of that app along 
 
 ![Example Screenshot](/images/Paneless-All-001.png?raw=true "Example Screenshot")
 
-![Pane Button Bar](/images/Paneless-Pane-BtnBar-001.png?raw=true "Pane Button Bar")
+Each pane has a button bar that is exposed by hovering the mouse around the top of the pane.
+<p align="center"> <img src="/images/Paneless-Pane-BtnBar-001.png?raw=true" alt="Pane Button Bar" /> </p>
 
 ## Install
 
