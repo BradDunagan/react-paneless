@@ -1,4 +1,4 @@
-# paneless
+# react-paneless
 
 <!--
 [![NPM](https://img.shields.io/npm/v/paneless.svg)](https://www.npmjs.com/package/paneless) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
@@ -6,7 +6,7 @@
 
 A minimal window manager that may be included in your ReactJS app.
 
-I am developing paneless to use in a larger app. I want to be able to display multiple, overlapping windows. With paneless each window is called a _frame_. Here is a screenshot of one frame of the app with five _panes_.
+I am developing paneless to use in a larger app. I want to be able to display multiple, overlapping windows. Each "window" is called a _frame_. Here is a screenshot of one frame of the app with five _panes_.
 
 - All app content is rendered in a pane.
 
@@ -36,6 +36,8 @@ Early development. Tried only on Chrome so far.
 This repository includes an example app. Images below are of the example app, illustrating features.  
 
 <p align="center"> <img src="/images/Paneless-All-002.png?raw=true alt="RR App Screenshot" /> </p>
+
+I suppose it should also be mentioned that paneless does the rendering of frames (normal and minimized) in an _app-frame_ that has an _app-header_ and _app-footer_.  
 
 Any pane's button bar is exposed by hovering the mouse around the top of the pane.
 
