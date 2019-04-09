@@ -374,6 +374,8 @@ class AppContent extends React.Component {
 	render() {
 		const sW = 'AppContent render()';
 		diag ( [1], sW );
+		let profound1 = this.props.profound1 ? this.props.profound1 : '';
+		let profound2 = this.props.profound2 ? this.props.profound2 : '';
 		return (
 			<div id 		= { this.eleId }
 				 className 	= "rr-app-content">
@@ -395,7 +397,8 @@ class AppContent extends React.Component {
 				</div>											*/ }
 				<div className = "rr-mird-container">
 					<span className = "rr-mird-span">
-						<p>- something profound -</p>
+						<p> { profound1 } </p>
+						<p> { profound2 } </p>
 					</span>
 				</div>
 				{this.state.frames}

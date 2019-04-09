@@ -285,7 +285,9 @@ class AppFrame extends Component {
 						   clientFnc   		= { this.props.clientFnc }
 						   appFrameFnc 		= { this.doAll } />
 				<AppContent clientFnc 	= { this.props.clientFnc }
-							appFrameFnc = { this.doAll } />
+							appFrameFnc = { this.doAll } 
+							profound1	= { this.props.profound1 }
+							profound2	= { this.props.profound2 } />
 				<AppFooter />
 				{ this.state.appDialog }
 			</div>
