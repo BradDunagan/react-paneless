@@ -1,7 +1,8 @@
+# paneless
+
 <!--
 [![NPM](https://img.shields.io/npm/v/paneless.svg)](https://www.npmjs.com/package/paneless) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 -->
-# paneless
 
 A minimal window manager that may be included in your ReactJS app.
 
@@ -11,6 +12,8 @@ I am developing paneless to use in a larger app. I want to be able to display mu
 
 - Frames may be minimized to a thumbnail size.
 
+- A frame's header (AKA title bar) and footer (AKA status bar) may be hidden. When a header is hidden you can still move the frame by hovering the mouse around its top border.
+
 - Panes are rendered in frames.
 
 - Each pane may be split so that a single frame may contain an arbitrary layout of multiple panes.
@@ -18,6 +21,8 @@ I am developing paneless to use in a larger app. I want to be able to display mu
 - Tabbed panes are implemented by this library.
 
 - This library supports persisting layouts.
+
+- Blue lines indicate the frame/pane with user focus. You can navigate around fames and panes with the Alt-f and Alt-p keys. Alt-b will activate the focused pane's menu. Hitting Alt-b again will activate the associated frame's menu. Arrow keys are used to navigate the menus and Escape (or clicking anywhere outside) closes the menu. The blue outline indicating the focused pane appears only for a few seconds and then fades so as not to obscure the app's content.
 
 <p align="center"> <img src="/images/RR-App-ScreenShot-002.png?raw=true alt="RR App Screenshot" /> </p>
 
