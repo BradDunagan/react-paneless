@@ -107,10 +107,10 @@ class DlgName extends React.Component {
 
 	render() {
 		return (
-			<div className = "rr-pe-dlg-name-dlg"
+			<div className = "rr-dlg-name-dlg"
 				 style = {this.state.styleMain}>
-				<div className = "rr-pe-dlg-name-main">
-					<div className = "rr-pe-dlg-name-title">
+				<div className = "rr-dlg-name-main">
+					<div className = "rr-dlg-name-title">
 						{this.props.ctx.title ? this.props.ctx.title 
 											  : 'Name Record'}
 					</div>
@@ -118,7 +118,7 @@ class DlgName extends React.Component {
 					<NameNotIdentifier dlg 		= { this.doAll }
 									   label	= { this.props.ctx.nameLabel }
 									   curText	= { this.props.ctx.curName } />
-					<div className = "rr-pe-dlg-name-buttons-container">
+					<div className = "rr-dlg-name-buttons-container">
 						 <button style = {{ visibility: 'hidden' }}>
 							nothing
 						</button>
@@ -141,7 +141,7 @@ class DlgName extends React.Component {
 		const sW = 'DlgName componentDidMount()'
 		this.setGlobalActiveDialogFnc ( this.doAll );
 		//  Set focus on the name editor.
-		const selector = '.rr-pe-dlg-name-dlg .rr-pe-dlg-name-input';
+		const selector = '.rr-dlg-name-dlg .rr-dlg-name-input';
 		let ele = document.querySelectorAll ( selector );
 		if ( ele.length < 1 ) {
 			console.log ( sW + ' ERROR: name element not found' );

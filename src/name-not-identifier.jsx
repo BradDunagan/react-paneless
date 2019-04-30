@@ -59,12 +59,12 @@ class NameNotIdentifier extends React.Component {
 	render() {
 		let label = this.props.label ? this.props.label : 'Name:'
 		return (
-			<div className = "rr-pe-dlg-name-container">
+			<div className = "rr-dlg-name-container">
 				<div className = "rr-app-label-input">
-					<div className = "rr-pe-dlg-name-label">
+					<div className = "rr-dlg-name-label">
 						{ label }
 					</div>
-					<input className 	= "rr-pe-dlg-name-input"
+					<input className 	= "rr-dlg-name-input"
 						   spellCheck	= { false }
 						   value		= { this.nameText }
 						   onKeyPress 	= { this.keypress }

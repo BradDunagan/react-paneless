@@ -670,7 +670,7 @@ https://stackoverflow.com/questions/985134/absolute-positioning-elements-within-
 
 /* ---------------------------  Name Dialog(s) ------------------------------ */
 
-.rr-pe-dlg-name-dlg {
+.rr-dlg-name-dlg {
 	display:            flex;
 	flex-direction:     row;
 	height:             135px;
@@ -678,13 +678,13 @@ https://stackoverflow.com/questions/985134/absolute-positioning-elements-within-
 	background-color:   white;
 }
 
-.rr-pe-dlg-name-main {
+.rr-dlg-name-main {
 	flex:               1 1 auto;
 /*	height:             400px;			*/
 	width:              350px;
 }
 
-.rr-pe-dlg-name-title {
+.rr-dlg-name-title {
 	position:           relative;
 	left:               45px;
 	top:                7px;
@@ -694,7 +694,7 @@ https://stackoverflow.com/questions/985134/absolute-positioning-elements-within-
 	text-align:         center;
 }
 
-.rr-pe-dlg-name-buttons-container {
+.rr-dlg-name-buttons-container {
 	display:            flex;
 	flex-direction:     row;
 	position:           relative;
@@ -717,7 +717,7 @@ https://stackoverflow.com/questions/985134/absolute-positioning-elements-within-
 	min-width:          60px;    
 }
 
-.rr-pe-dlg-name-container { /* identical to rr-app-sign-in-email-container? */
+.rr-dlg-name-container { /* identical to rr-app-sign-in-email-container? */
 	display:            flex;
 	flex-direction:     column;
 	position:           relative;
@@ -741,14 +741,14 @@ https://stackoverflow.com/questions/985134/absolute-positioning-elements-within-
 	align-items:        center;         /*  cross-axis                      */
 }
 
-.rr-pe-dlg-name-label {
+.rr-dlg-name-label {
 	flex:               1 1 auto;
 	max-width:          55px;
 /*  border:             dashed 1px lightgray;   */
 	text-align:         right;
 }
 
-.rr-pe-dlg-name-input {
+.rr-dlg-name-input {
 	flex:               1 1 auto;
 	max-width:          190px;
 	font-family:        Verdana, Geneva, Tahoma, sans-serif;

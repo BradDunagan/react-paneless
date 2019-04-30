@@ -16,9 +16,10 @@ class FrameHeader extends React.Component {
 	constructor ( props ) {
 		super ( props );
 		this.state = {
-			frameName:	props.frameName,
-			class:		"rr-frame-title-bar",
-			style:		null
+			frameName:		props.frameName,
+			frameNamePart2:	"",
+			class:			"rr-frame-title-bar",
+			style:			null
 		};
 
 		this.mouseEnter		= this.mouseEnter.bind ( this );
@@ -60,9 +61,16 @@ class FrameHeader extends React.Component {
 		if ( o.do === 'set-frame-name' ) {
 			this.setState ( { frameName: o.name } );
 			return; }
+		if ( o.do === 'set-frame-name-part-2' ) {
+			this.setState ( { frameNamePart2: o.namePart2 } );
+			return; }
 	}	//	doAll()
 
 	render() {
+		let title = this.state.frameName;
+		let part2 = this.state.frameNamePart2;
+		if ( (typeof part2 === 'string') && (part2.length > 0) ) {
+			title += " - " + part2; }
 		return (
 			<div className		= { this.state.class }
 				 style			= { this.state.style } 
@@ -73,7 +81,7 @@ class FrameHeader extends React.Component {
 								 frameId	= { this.props.frameId }
 								 frameFnc 	= { this.props.frameFnc } />
 				<FrameTitle frameId		= { this.props.frameId }
-							titleText	= { this.state.frameName }
+							titleText	= { title }
 							frameFnc	= { this.props.frameFnc } />
 				<FrameIconize class 	= "frame-title-bar-iconize"
 							  frameId	= { this.props.frameId }

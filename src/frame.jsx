@@ -415,8 +415,11 @@ class Frame extends React.Component {
 
 	cyclePaneFocus ( o ) {
 		let panes = {};
-		this.rootPaneFnc ( { do: 	'enum-panes',
-							 panes:	panes } );
+		if ( typeof this.rootPaneFnc === 'function' ) {
+			this.rootPaneFnc ( { do: 	'enum-panes',
+								 panes:	panes } ); }
+		else {
+			return null; }
 
 		let paneFnc, paneId, paneIds = Object.keys ( panes );
 		paneIds.forEach ( ( x, i ) => { 
@@ -460,14 +463,15 @@ class Frame extends React.Component {
 
 	refocusPane() {
 		let panes = {};
-		this.rootPaneFnc ( { do: 	'enum-panes',
-							panes:	panes } );
-		if ( this.focusedPaneId > 0 ) {
-			let paneFnc = panes[this.focusedPaneId];
-			if ( paneFnc ) {
-				paneFnc ( { do: 'focus' } ); 
-				this.startPaneFocusTimer();
-				return paneFnc; } }
+		if ( typeof this.rootPaneFnc === 'function' ) {
+			this.rootPaneFnc ( { do: 	'enum-panes',
+								panes:	panes } );
+			if ( this.focusedPaneId > 0 ) {
+				let paneFnc = panes[this.focusedPaneId];
+				if ( paneFnc ) {
+					paneFnc ( { do: 'focus' } ); 
+					this.startPaneFocusTimer();
+					return paneFnc; } } }
 
 		let paneFnc, paneId, paneIds = Object.keys ( panes );
 		if ( paneIds.length === 0 ) {
@@ -486,8 +490,9 @@ class Frame extends React.Component {
 		if ( this.focusedPaneId === 0 ) {
 			return; }
 		let panes = {};
-		this.rootPaneFnc ( { do: 	'enum-panes',
-							 panes:	panes } );
+		if ( typeof this.rootPaneFnc === 'function' ) {
+			this.rootPaneFnc ( { do: 	'enum-panes',
+								 panes:	panes } ); }
 		let paneFnc = panes[this.focusedPaneId];
 		if ( paneFnc ) {
 			paneFnc ( { do: 'not-focus' } ); }
@@ -728,6 +733,10 @@ class Frame extends React.Component {
 		}
 		if ( o.do === 'name-frame-name' ) {
 			this.nameFrameName ( o );
+			return; }
+		if ( o.do === 'set-frame-name-part-2' ) {
+			if ( this.headerFnc ) {
+				this.headerFnc ( o ); }
 			return; }
 		if ( o.do === 'is-header-transient' ) {
 			return !! this.state.transientHeader;
