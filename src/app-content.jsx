@@ -13,6 +13,19 @@ import {diag, diagsFlush, diagsPrint} 	from './diags';
 
 let lastFrameId = 0;
 
+
+function getFrameId() {
+	return ++lastFrameId;
+}
+
+function getLastFrameId() {
+	return lastFrameId;
+}
+
+function setLastFrameId ( frameId ) {
+	lastFrameId = frameId;
+}
+
 class AppContent extends React.Component {
 	constructor ( props ) {
 		super ( props );
@@ -37,9 +50,10 @@ class AppContent extends React.Component {
 		this.setFrameFocus2		= this.setFrameFocus2.bind ( this );
 		this.setFrameFocus		= this.setFrameFocus.bind ( this );
 		this.cycleFrameFocus	= this.cycleFrameFocus.bind ( this );
-		this.addFrame 	= this.addFrame.bind ( this );
-		this.addFrames	= this.addFrames.bind ( this );
-		this.doAll 		= this.doAll.bind ( this );
+		this.addFrame 		= this.addFrame.bind ( this );
+		this.addFrames		= this.addFrames.bind ( this );
+		this.destroyFrame	= this.destroyFrame.bind ( this );
+		this.doAll 			= this.doAll.bind ( this );
 
 		this.focusedFrameId = null;
 
@@ -166,7 +180,20 @@ class AppContent extends React.Component {
 	}	//	cycleFrameFocus()
 
 	addFrame ( o ) {
+		const sW = 'AppContent addFrame()';
 		let frame = null, fa = [];
+
+		this.frames[o.frameId] = { frame: 		frame,
+								   type:		o.frameType,
+							//	   ccEleId:		o.ccEleId,
+								   frameFnc:	null,
+								   iconSlot:	null };
+
+		if ( o.frameType === 'dialog' ) {
+			//	Frame is rendered by AppDialog.
+			diag ( [1, 2], sW + ': dialog' );
+			return; }
+
 		frame = <Frame key 				= { o.frameId }
 					   hdrVisible		= { o.hdrVisible }
 					   ftrVisible		= { o.ftrVisible }
@@ -176,18 +203,14 @@ class AppContent extends React.Component {
 					   paneId			= { o.paneId }
 					   appFrameFnc 		= { this.props.appFrameFnc } 
 					   appContentFnc	= { this.doAll }
-					   left 			= { o.left }
-					   top				= { o.top }
-					   width 			= { o.width }
-					   height			= { o.height }
+					   left 			= { o.style.left }
+					   top				= { o.style.top }
+					   width 			= { o.style.width }
+					   height			= { o.style.height }
 					   iconized			= { o.iconized }
 					   clientFnc		= { this.props.clientFnc } />;
 
-		this.frames[o.frameId] = { frame: 		frame,
-								   type:		o.frameType,
-								   ccEleId:		o.ccEleId,
-								   frameFnc:	null,
-								   iconSlot:	null };
+		this.frames[o.frameId].frame = frame;
 
 		for ( var id in this.frames ) {
 			fa.push ( this.frames[id].frame ); }
@@ -195,8 +218,7 @@ class AppContent extends React.Component {
 		this.setState ( { frames: fa }, () => {
 			let focus = this.setFrameFocus ( o.frameId );
 			this.props.appFrameFnc ( { do:		'set-focused-frame-fnc',
-									   focus:	focus } );
-		} );
+									   focus:	focus } ); } );
 
 		return o.frameId;
 	}	//	addFrame()
@@ -214,14 +236,14 @@ class AppContent extends React.Component {
 						   paneId			= { o.paneId }
 						   appFrameFnc 		= { this.props.appFrameFnc } 
 						   appContentFnc	= { this.doAll }
-						   left 			= { o.left }
-						   top				= { o.top }
-						   width 			= { o.width }
-						   height			= { o.height }
+						   left 			= { o.style.left }
+						   top				= { o.style.top }
+						   width 			= { o.style.width }
+						   height			= { o.style.height }
 						   iconized			= { o.iconized }
 						   clientFnc		= { this.props.clientFnc } />;
 			this.frames[o.frameId] = { frame: 		frame,
-									   ccEleId:		o.ccEleId,
+								//	   ccEleId:		o.ccEleId,
 									   frameFnc:	null,
 									   iconSlot:	null };
 			fa.push ( frame );
@@ -230,11 +252,38 @@ class AppContent extends React.Component {
 		this.setState ( { frames: fa } );
 	}	//	addFrames()
 
+	destroyFrame ( o ) {
+		const sW = 'AppContent destroyFrame()  frameId: ' + o.frameId;
+		console.log ( sW );
+		if ( o.frameId === this.focusedFrameId ) {
+			this.focusedFrameId = null; }
+		let frm  = this.frames[o.frameId];
+		if ( frm.type === 'dialog' ) {
+			delete this.frames[o.frameId];
+			//	Frame is (was) rendered by AppDialog.
+			this.props.appFrameFnc ( { do: 	'close-dlg' } );
+			return; }
+		let self = this;
+		let keys = Object.keys ( this.frames );
+		let fa = [];
+		keys.forEach ( frameId => {
+			if ( Number.parseInt ( frameId ) === o.frameId ) {
+				return; }
+			fa.push ( self.frames[frameId].frame ); } );
+
+		console.log ( sW + ' fa[] length: ' + fa.length );
+
+		this.setState ( { frames: fa }, () => {
+			console.log ( sW + ' deleting self.frames[' + o.frameId + '] ...' );
+			delete self.frames[o.frameId] } );
+	}	//	destroyFrame()
+
 	doAll ( o ) {
 		let sW = 'AppContent doAll() ' + o.do;
 		if ( o.to ) {
 			sW += ' to ' + o.to; }
-		diag ( [1, 2], sW  );
+	//	diag ( [1, 2], sW  );
+		console.log ( sW );
 		if ( o.do === 'e2e-clear-output' ) {
 			this.e2eClearOutput ( o );
 			return;
@@ -280,7 +329,7 @@ class AppContent extends React.Component {
 			return;
 		}
 		if ( o.do === 'get-new-frame-id' ) {
-			return { frameId:	++lastFrameId,
+			return { frameId:	getFrameId(),
 					 paneId:	getPaneId() };
 		}
 		if ( o.do === 'add-frame' ) {
@@ -289,8 +338,12 @@ class AppContent extends React.Component {
 		if ( o.do === 'add-frames' ) {
 			this.addFrames ( o.frames );
 		}
+		if ( o.do === 'destroy-frame' ) {
+			this.destroyFrame ( o );
+			return;
+		}
 		if ( o.do === 'get-state' ) {
-			let state = { lastFrameId: 	lastFrameId,
+			let state = { lastFrameId: 	getLastFrameId(),
 						  lastPaneId:	getLastPaneId(),
 						  frames:		{} };
 			for ( let frameId in this.frames ) {
@@ -301,7 +354,7 @@ class AppContent extends React.Component {
 			return state;
 		}
 		if ( o.do === 'set-state' ) {
-			lastFrameId = o.state.lastFrameId;
+			setLastFrameId ( o.state.lastFrameId );
 			setLastPaneId ( o.state.lastPaneId );
 			//	The rest is done by the app.
 			return;
@@ -432,4 +485,4 @@ class AppContent extends React.Component {
 
 
 
-export default AppContent;
+export { AppContent as default, getFrameId };

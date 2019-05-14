@@ -111,7 +111,7 @@ class BurgerMenu extends Component {
 
 	keyDown ( ev ) {
 		let sW = 'BurgerMenu keyDown()';
-		console.log ( sW + '  ' + this.props.eleId + '  ' + ev.key );
+	//	console.log ( sW + '  ' + this.props.eleId + '  ' + ev.key );
 		if ( ev.key === 'Enter' ) {
 			if ( this.curItem ) {
 				this.selectItem ( this.curItem.idx );

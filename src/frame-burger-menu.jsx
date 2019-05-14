@@ -28,25 +28,25 @@ class FrameBurgerMenu extends Component {
 
 	mouseDown ( ev ) {
 		let sW = 'mouseDown()';
-		console.log ( sW );
+	//	console.log ( sW );
 		ev.stopPropagation();
 	}	//	mouseDown()
 
 	mouseUp ( ev ) {
 		let sW = 'mouseUp()';
-		console.log ( sW );
+	//	console.log ( sW );
 		ev.stopPropagation();
 	}	//	mouseUp()
 
 	mouseMove ( ev ) {
 		let sW = 'mouseMove()';
-		console.log ( sW );
+	//	console.log ( sW );
 		ev.stopPropagation();
 	}	//	mouseMove()
 
 	click ( ev ) {
 		let sW = 'click()';
-		console.log ( sW );
+	//	console.log ( sW );
 		this.frameFnc ( { do: 'frame-burger-click' } );
 		ev.stopPropagation();
 	}	//	click()

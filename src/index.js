@@ -5,6 +5,9 @@ import PropTypes 			from 'prop-types'
 
 import AppFrame     		from './app-frame';
 
+import { getFrameId }		from './app-content';
+import { getPaneId }		from './pane';
+
 import { diag, 
 		 diagsFlush, 
 		 diagsPrint}		from './diags';
@@ -31,6 +34,10 @@ export default class ExampleComponent extends Component {
 }
 
 export { AppFrame };
+
+export { getFrameId };
+
+export { getPaneId };
 
 export { diag, diagsFlush, diagsPrint };
 

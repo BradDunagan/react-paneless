@@ -399,6 +399,9 @@ class Tabs extends Component {
 			};
 			return state;
 		}
+		if ( o.do === 'get-state-2' ) {
+			console.log ( sW + ' Error: state-2 is not implemented here' );
+			return null; }
 		if ( o.do === 'set-state' ) {
 		//	if ( ! this.isMountified ) {
 		//		this.oState = o;

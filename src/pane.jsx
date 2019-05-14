@@ -80,6 +80,8 @@ class Pane extends React.Component {
 		this.propagateDown_SizeOp 	= this.propagateDown_SizeOp.bind ( this );
 		this.enumPanes 				= this.enumPanes.bind ( this );
 		this.keyBurgerMenu			= this.keyBurgerMenu.bind ( this );
+		this.doGetState				= this.doGetState.bind ( this );
+		this.doSetState				= this.doSetState.bind ( this );
 		this.doAll 					= this.doAll.bind ( this );
 
 
@@ -687,6 +689,74 @@ class Pane extends React.Component {
 //		this.setState ( { style: s } );
 //	}	//	sizeByTabPage()
 
+	doGetState ( o ) {
+		let pe = document.getElementById ( this.eleId );
+		let state = clone ( this.state );
+		let sh = state.splitHorz;
+		let sv = state.splitVert;
+		if ( sh ) {
+			sh.left.contentState = sh.left.paneFnc ( o );
+			sh.left.paneFnc = null;
+			sh.right.contentState = sh.right.paneFnc ( o );
+			sh.right.paneFnc = null; }
+		//	sh.opts.elementStyle = null;
+		//	sh.opts.onDrag = null; }
+		if ( sv ) {
+			sv.top.contentState = sv.top.paneFnc ( o );
+			sv.top.paneFnc = null;
+			sv.bottom.contentState = sv.bottom.paneFnc ( o );
+			sv.bottom.paneFnc = null; }
+		//	sv.opts.elementStyle = null;
+		//	sv.opts.onDrag = null; }
+		if ( (! sh) && (! sv) && this.ccFnc ) {
+			state.ccState = this.ccFnc ( o );
+		} else {
+			state.ccState = null; }
+		if ( this.state.tabs ) {
+			state.tabsState = this.tabsFnc ( o );
+		} else {
+			state.tabsState = false; }
+
+		return state;
+	}	//	doGetState()
+
+	doSetState ( state ) {
+		const sW = 'Pane doSetState()';
+		let sh = state.splitHorz;
+		let sv = state.splitVert;
+		if ( (! this.props.parentFnc) && (sh || sv) ) {
+			this.props.frameFnc ( { do: 'clear-pane-btn-bars' } ); }
+		if ( sh ) {
+			sh.incomplete			= true; }
+		if ( sv ) {
+			sv.incomplete			= true; }
+		if ( (! sh) && (! sv) ) {
+			if ( this.ccFnc ) {
+			//	console.log ( sW + ' set-state: this.ccFnc is set' );
+				diag ( [3], sW + ': this.ccFnc is set' );
+				this.ccFnc ( { do: 		'set-state',
+							   state:	state.ccState } );
+			} else {
+			//	diag ( [], sW + ' set-state ERROR: this.ccFnc is not set' );
+				//	Set client content state when we get the ccFnc.
+				diag ( [3], sW + ': this.ccState' );
+				this.ccState = state.ccState;
+			}
+			delete state.ccState;
+		}
+			
+		let tabsState = state.tabsState;
+		delete state.tabsState;
+		let self = this;
+		this.setState ( state, () => {
+			if ( ! tabsState ) {
+				return; }
+			self.tabsFnc ( { do: 	'set-state',
+							 state:	tabsState } );
+		} );
+		return (!!sh) || (!!sv);
+	}	//	doSetState()
+
 	doAll ( o ) {
 		let sW = 'Pane ' + this.props.paneId + ' doAll() ' + o.do;
 		if ( o.to ) {
@@ -744,7 +814,7 @@ class Pane extends React.Component {
 						this.ccState = null; }
 					else {
 						let state = this.props.clientFnc ( { 
-										do: 	'load-state',
+										do: 	'load-pane-state',
 										paneId:	this.props.paneId } );
 						if ( state && state.ccState ) {
 							this.ccFnc ( { do: 		'set-state',
@@ -885,105 +955,25 @@ class Pane extends React.Component {
 			return;
 		}
 		if ( o.do === 'get-state' ) {
-			let pe = document.getElementById ( this.eleId );
-			let state = clone ( this.state );
-			let sh = state.splitHorz;
-			let sv = state.splitVert;
-			if ( sh ) {
-				sh.left.contentState = sh.left.paneFnc ( o );
-				sh.left.paneFnc = null;
-				sh.right.contentState = sh.right.paneFnc ( o );
-				sh.right.paneFnc = null; }
-			//	sh.opts.elementStyle = null;
-			//	sh.opts.onDrag = null; }
-			if ( sv ) {
-				sv.top.contentState = sv.top.paneFnc ( o );
-				sv.top.paneFnc = null;
-				sv.bottom.contentState = sv.bottom.paneFnc ( o );
-				sv.bottom.paneFnc = null; }
-			//	sv.opts.elementStyle = null;
-			//	sv.opts.onDrag = null; }
-			if ( (! sh) && (! sv) && this.ccFnc ) {
-				state.ccState = this.ccFnc ( o );
-			} else {
-				state.ccState = null; }
-			if ( this.state.tabs ) {
-				state.tabsState = this.tabsFnc ( o );
-			} else {
-				state.tabsState = false; }
-
-		//	state.eleData = {};
-		//	let d = this.eleData[pe.id];
-		//	if ( d && d.split ) {
-		//		state.eleData.splitSizes = d.split.instance.getSizes(); }
-		//	else {
-		//		state.eleData.splitSizes = null; }
-				
-		//	state.split = {
-		//		w0:		this.w0,
-		//		lftW0:	this.lftW0,
-		//		h0:		this.h0,
-		//		topH0:	this.topH0 };
-
-			this.props.clientFnc ( { do: 		'store-state',
+			this.props.clientFnc ( { do: 		'store-pane-state',
 									 paneId: 	this.props.paneId,
-									 state:		state } );
+									 state:		this.doGetState ( o ) } );
 			return null;
 		}
 		if ( o.do === 'set-state' ) {
 			let state = this.props.clientFnc ( { 
-							do: 	'load-state',
+							do: 	'load-pane-state',
 							paneId:	this.props.paneId } );
 			if ( ! state ) {
 				return; }
-			let sh = state.splitHorz;
-			let sv = state.splitVert;
-			if ( (! this.props.parentFnc) && (sh || sv) ) {
-				this.props.frameFnc ( { do: 'clear-pane-btn-bars' } ); }
-			if ( sh ) {
-			//	sh.opts.elementStyle	= this.myElementStyleFnc;
-			//	sh.opts.onDrag			= this.splitDrag;
-				sh.incomplete			= true; }
-			if ( sv ) {
-			//	sv.opts.elementStyle	= this.myElementStyleFnc;
-			//	sv.opts.onDrag			= this.splitDrag;
-				sv.incomplete			= true; }
-			if ( (! sh) && (! sv) ) {
-				if ( this.ccFnc ) {
-				//	console.log ( sW + ' set-state: this.ccFnc is set' );
-					diag ( [3], sW + ': this.ccFnc is set' );
-					this.ccFnc ( { do: 		'set-state',
-								   state:	state.ccState } );
-				} else {
-				//	diag ( [], sW + ' set-state ERROR: this.ccFnc is not set' );
-					//	Set client content state when we get the ccFnc.
-					diag ( [3], sW + ': this.ccState' );
-					this.ccState = state.ccState;
-				}
-				delete state.ccState;
-			}
-			
-			let d = this.eleData[this.eleId] = {};
-		//	if ( state.eleData.splitSizes ) {
-		//		d.splitSizes = state.eleData.splitSizes; }
-
-		//	this.w0 	= state.split.w0;
-		//	this.lftW0 	= state.split.lftW0;
-		//	this.h0 	= state.split.h0;
-		//	this.topH0 	= state.split.topH0;
-
-			let tabsState = state.tabsState;
-			delete state.tabsState;
-			let self = this;
-			this.setState ( state, () => {
-				if ( ! tabsState ) {
-					return; }
-				self.tabsFnc ( { do: 	'set-state',
-								 state:	tabsState } );
-			} );
-			return (!!sh) || (!!sv);
+			return this.doSetState ( state );
 		}
-
+		if ( o.do === 'get-state-2' ) {
+			return this.doGetState ( o );
+		}
+		if ( o.do === 'set-state-2' ) {
+			return this.doSetState ( o.state );
+		}
 		if ( o.do === 'burger-menu-dismissed' ) {
 			this.isShowingBurgerMenu = false;
 			return;

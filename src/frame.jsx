@@ -58,6 +58,7 @@ class Frame extends React.Component {
 		this.burgerClick		= this.burgerClick.bind ( this );
 		this.iconize2			= this.iconize2.bind ( this );
 		this.iconize 			= this.iconize.bind ( this );
+		this.destroy			= this.destroy.bind ( this );
 		this.transitionEnd		= this.transitionEnd.bind ( this );
 		this.clickIcon			= this.clickIcon.bind ( this );
 		this.nameFrame			= this.nameFrame.bind ( this );
@@ -158,6 +159,8 @@ class Frame extends React.Component {
 
 		this.isShowingBurgerMenu 		= false;
 
+		this.beingDestroyed				= false;
+		
 	}	//	constructor()
 
 	zTop() {
@@ -228,14 +231,28 @@ class Frame extends React.Component {
 												 : 'Show Header';
 		let itemTextFtr = this.isFooterVisible() ? 'Hide Footer' 
 												 : 'Show Footer';
+		let menuItems = [ 
+			{ type: 'item', 		text: 'Frame Name ...' },
+			{ type: 'item', 		text: itemTextHdr },
+			{ type: 'item', 		text: itemTextFtr } ];
+
+		let clientItems = [];
+		this.props.clientFnc( {
+			do:			'append-menu-items',
+			to:			'frame-burger',
+			frameId:	this.props.frameId,
+			menuItems:	clientItems } );
+		if ( clientItems.length > 0 ) {
+			if ( menuItems.length > 0 ) {
+				menuItems.push ( {type: 'separator', 	text: '' } ); }
+			menuItems = menuItems.concat ( clientItems ); }
+
 		this.appFnc ( { 
 			do: 		'show-menu',
 			menuEleId:	this.eleId + '-burger-menu',
 			menuX:		r.x,
 			menuY:		r.y,
-			menuItems:	[ { type: 'item', 		text: 'Frame Name ...' },
-						  { type: 'item', 		text: itemTextHdr },
-						  { type: 'item', 		text: itemTextFtr } ],
+			menuItems:	menuItems,
 			upFnc:		this.doAll,
 			ctx:		{ what:		'frame burger',
 						  dismiss:	'burger-menu-dismissed',
@@ -301,6 +318,14 @@ class Frame extends React.Component {
 		}
 		this.iconize2();
 	}	//	iconize()
+
+	destroy ( o ) {
+		const sW = this.props.frameId + ' Frame destroy()';
+		console.log ( sW );
+		this.beingDestroyed = true;
+		this.props.appContentFnc( { do:			'destroy-frame',
+								 	frameId:	this.props.frameId } );
+	}	//	destroy();
 
 	transitionEnd ( ev ) {
 		let sW = 'transitionEnd()';
@@ -642,6 +667,11 @@ class Frame extends React.Component {
 			this.iconize ( o );
 			return;
 		}
+		if ( o.do === 'destroy' ) {
+			this.destroy ( o );
+			return;
+		}
+
 		if ( o.do === 'get-state' ) {
 			if ( this.state.iconized ) {
 				return {
@@ -663,10 +693,32 @@ class Frame extends React.Component {
 				paneId:		this.props.paneId,
 				style:	  	clone ( this.state.style ) };
 		}
+		if ( o.do === 'get-state-2' ) {
+			if ( this.state.iconized ) {
+				console.log ( sW + ' Error: frame is iconized' );
+				return null; }
+
+			return {
+				hdrVisible:	!! this.state.normalHeader,
+				ftrVisible:	this.isFooterVisible(),
+				frameName:	this.state.frameName,
+				frameType:	this.props.frameType,
+				frameId:	this.props.frameId,
+				paneId:		this.props.paneId,
+				style:	  	clone ( this.state.style ),
+				paneState:	this.rootPaneFnc ( o ) };
+		}
+
 		if ( o.do === 'set-state' ) {
-			this.rootPaneFnc ( o );		//	get state from app store
+			this.rootPaneFnc ( o );		//	set state from app store
 			return;
 		}
+		if ( o.do === 'set-state-2' ) {
+			this.rootPaneFnc ( { do:	o.do,
+								 state:	o.state.paneState } );
+			return;
+		}
+
 		if ( o.do === 'split-horz' ) {
 			if ( this.rootPaneFnc ) {
 				this.rootPaneFnc ( o );	}
@@ -871,6 +923,14 @@ class Frame extends React.Component {
 			this.state.contentRestoreIncomplete = false; }
 
 	}	//	componentDidUpdate()
+
+	componentWillUnmount() {
+		const sW = this.props.frameId + ' Frame componentWillUnmount()';
+		console.log ( sW );
+		if ( this.beingDestroyed ) {
+			this.props.clientFnc ( { do:		'destroy-frame',
+									 frameId:	this.props.frameId } ); }
+	}	//	componentWillUnmount()
 
 }	//	class Frame
 

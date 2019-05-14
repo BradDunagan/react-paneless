@@ -75,7 +75,7 @@ class AppFrame extends Component {
 		//	Alt-T 	cycle tabs (if the focused pane is that of a tab). 
 		if ( ev.altKey ) {
 	//		console.log ( sW + ' shift ' + ev.key ); 
-			console.log ( sW + ' alt ' + ev.key ); 
+	//		console.log ( sW + ' alt ' + ev.key ); 
 	//		if ( ev.key === 'Tab' ) {
 			let key = ev.key.toUpperCase();
 			if ( key === 'F' ) {
@@ -164,6 +164,13 @@ class AppFrame extends Component {
 	updateDialogState() {
 		this.setState ( {  
 			appDialog: this.dlgList.map ( ( r, i ) => {
+				if ( r.dlg === 'app-dialog-frame' ) {
+					return ( <AppDialog key 		  = { i }
+										appFrameFnc   = { this.doAll }
+										appContentFnc = { this.appContentFnc }
+										clientFnc	  = { this.props.clientFnc }
+										frame 		  = { r.frame } /> );
+				}
 				if ( r.dlg === 'app-dialog' ) {
 					return ( <AppDialog key 		= { i }
 										appFrameFnc = { this.doAll }
@@ -240,6 +247,12 @@ class AppFrame extends Component {
 		if ( o.do === 'app-dialog' ) {
 			this.dlgList.push ( { dlg: 		'app-dialog',
 								  comp:		o.dlgComp } );
+			this.updateDialogState();
+			return;
+		}
+		if ( o.do === 'app-dialog-frame' ) {
+			this.dlgList.push ( { dlg:		'app-dialog-frame',
+								  frame:	o.frame } );
 			this.updateDialogState();
 			return;
 		}

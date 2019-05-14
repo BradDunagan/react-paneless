@@ -26,8 +26,8 @@ class App extends Component {
 		this.setCallDown		= this.setCallDown.bind ( this );
 		this.fixPaneId			= this.fixPaneId.bind ( this );
 		this.menuItem			= this.menuItem.bind ( this );
-		this.storeState			= this.storeState.bind ( this );
-		this.loadState			= this.loadState.bind ( this );
+		this.storePaneState		= this.storePaneState.bind ( this );
+		this.loadPaneState		= this.loadPaneState.bind ( this );
 	//	this.saveApp			= this.saveApp.bind ( this );
 	//	this.loadApp			= this.loadApp.bind ( this );
 		this.newFrame			= this.newFrame.bind ( this );
@@ -293,8 +293,8 @@ class App extends Component {
 			{ do: 'install-client-content' }, content.install ) );
 	}	//	menuItem()
 
-	storeState ( o ) {
-		const sW = 'App storeState()  paneId ' + o.paneId;
+	storePaneState ( o ) {
+		const sW = 'App storePaneState()  paneId ' + o.paneId;
 		diag ( [1, 2, 3], sW );
 		//	This "state" being stored is that of the pane and its content.
 		//	If the pane is split then the state includes the split position
@@ -306,10 +306,10 @@ class App extends Component {
 						  + ' (paneId ' + o.paneId + ')' );
 			return; }
 		content.state = o.state;
-	}	//	storeState();
+	}	//	storePaneState();
 
-	loadState ( o ) {
-		const sW = 'App loadState()  paneId ' + o.paneId;
+	loadPaneState ( o ) {
+		const sW = 'App loadPaneState()  paneId ' + o.paneId;
 		diag ( [1, 2, 3], sW );
 		let content = this.content[o.paneId];
 		if ( ! content ) {
@@ -317,7 +317,7 @@ class App extends Component {
 						  + ' (paneId ' + o.paneId + ')' );
 			return; }
 		return content.state;
-	}	//	loadState():
+	}	//	loadPaneState():
 
 /*
 	saveApp ( o ) {
@@ -466,11 +466,11 @@ class App extends Component {
 			case 'menu-item':
 				this.menuItem ( o );
 				break;
-			case 'store-state':
-				this.storeState ( o );
+			case 'store-pane-state':
+				this.storePaneState ( o );
 				break;
-			case 'load-state':
-				return this.loadState ( o );
+			case 'load-pane-state':
+				return this.loadPaneState ( o );
 			case 'define-pane-content':
 				this.definePaneContent ( o, 0, false );
 				break;

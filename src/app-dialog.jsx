@@ -8,6 +8,7 @@ import AppSignInDialog  from './sign-in';
 */
 import DlgName			from './dlg-name';
 import BurgerMenu       from './burger-menu';
+import Frame			from './frame';
 
 class AppDialog extends React.Component {
 	constructor ( props ) {
@@ -64,6 +65,27 @@ class AppDialog extends React.Component {
 	}	//	doAll()
 
 	render() {
+		if ( this.props.frame ) {
+			let o = this.props.frame;
+			return (
+				<div className	= "rr-app-screen-dialog" >
+					<Frame hdrVisible		= { o.hdrVisible }
+				   		   ftrVisible		= { o.ftrVisible }
+				   		   frameName		= { o.frameName }
+				   		   frameType		= { o.frameType }
+				   		   frameId 			= { o.frameId }
+				   		   paneId			= { o.paneId }
+				   		   appFrameFnc 		= { this.props.appFrameFnc } 
+				   		   appContentFnc	= { this.props.appContentFnc }
+				   		   left 			= { null }
+				   		   top				= { null }
+				   		   width 			= { o.style.width }
+				   		   height			= { o.style.height }
+				   		   iconized			= { null }
+				   		   clientFnc		= { this.props.clientFnc } />;
+				</div>
+			);
+		}
 		if ( this.props.comp ) {
 			return (
 				<div className	= "rr-app-screen-dialog" >
