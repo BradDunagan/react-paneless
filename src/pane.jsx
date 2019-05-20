@@ -951,8 +951,8 @@ class Pane extends React.Component {
 		}
 		if ( o.do === 'keyboard-key-down' ) {
 			if ( this.ccFnc ) {
-				this.ccFnc ( o ); }
-			return;
+				return this.ccFnc ( o ); }
+			return false;
 		}
 		if ( o.do === 'get-state' ) {
 			this.props.clientFnc ( { do: 		'store-pane-state',

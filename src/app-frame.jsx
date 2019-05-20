@@ -55,6 +55,8 @@ class AppFrame extends Component {
 
 		if (    this.focusedPaneFnc 
 			 && this.focusedPaneFnc ( { do: 'keyboard-key-down', ev: ev } ) ) {
+			console.log ( sW + ': pane got it' );
+			ev.preventDefault();
 			return; }
 
 		if ( this.appContentFnc ( { do: 'keyboard-key-down', ev: ev } ) ) {

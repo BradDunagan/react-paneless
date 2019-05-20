@@ -173,11 +173,13 @@ class Frame extends React.Component {
 	//	console.log ( sW + '  ' + o.ev.key );
 		if ( this.state.iconized ) {
 			if ( o.ev.key === 'Enter' ) {
-				this.clickIcon ( null ); }		//	Un-iconize.
-			return; }
+				this.clickIcon ( null ); 		//	Un-iconize.
+				return true; }
+			return false; }
 		if ( o.ev.shiftKey && (o.ev.key === ' ') ) {
 			this.doAll ( { do: 'frame-burger-click' } );
-			return; }
+			return true; }
+		return false;
 	}	//	keyDown()
 
 	mouseDown ( ev ) {
@@ -609,8 +611,7 @@ class Frame extends React.Component {
 			return;
 		}
 		if ( o.do === 'keyboard-key-down' ) {
-			this.keyDown ( o );
-			return;
+			return this.keyDown ( o );
 		}
 		if ( o.do === 'move-start' ) {
 			this.moveX0 = Number.parseInt ( this.state.style.left );

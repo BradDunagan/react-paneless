@@ -103,11 +103,11 @@ class AppContent extends React.Component {
 	//	console.log ( sW + '  ' + o.ev.key );
 		let frameId = this.focusedFrameId;
 		if ( ! frameId ) {
-			return; }
+			return false; }
 		let frame = this.frames[frameId];
 		if ( ! frame ) {
-			return; }
-		frame.frameFnc ( o );
+			return false; }
+		return frame.frameFnc ( o );
 	}	//	keyDown()
 
 	setFrameFocus2 ( frameId ) {
@@ -311,8 +311,7 @@ class AppContent extends React.Component {
 			return;
 		}
 		if ( o.do === 'keyboard-key-down' ) {
-			this.keyDown ( o );
-			return;
+			return this.keyDown ( o );
 		}
 		if ( o.do === 'cycle-frame-focus' ) {
 			return this.cycleFrameFocus();
