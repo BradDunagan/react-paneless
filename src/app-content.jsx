@@ -338,6 +338,8 @@ class AppContent extends React.Component {
 			this.addFrames ( o.frames );
 		}
 		if ( o.do === 'destroy-frame' ) {
+			this.props.appFrameFnc ( { do:		'set-focused-frame-fnc',
+									   focus:	null } );
 			this.destroyFrame ( o );
 			return;
 		}
