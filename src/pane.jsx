@@ -404,7 +404,7 @@ class Pane extends React.Component {
 
 	hsplitterPointerDown ( evt ) {
 		const sW = 'Pane hsplitterPointerDown()';
-		console.log ( sW );
+	//	console.log ( sW );
 		let e = document.getElementById ( this.eleId + '-hsplitter' );
 		let lft = this.state.shLftStyle;
 		let rgt = this.state.shRgtStyle;
@@ -430,7 +430,7 @@ class Pane extends React.Component {
 
 	vsplitterPointerDown ( evt ) {
 		const sW = 'Pane vsplitterPointerDown()';
-		console.log ( sW );
+	//	console.log ( sW );
 		let e = document.getElementById ( this.eleId + '-vsplitter' );
 		let top = this.state.svTopStyle;
 		let bot = this.state.svBotStyle;
@@ -456,7 +456,7 @@ class Pane extends React.Component {
 
 	hsplitterPointerUp ( evt ) {
 		const sW = 'Pane hsplitterPointerUp()';
-		console.log ( sW );
+	//	console.log ( sW );
 		let e = document.getElementById ( this.eleId + '-hsplitter' );
 		let lft = this.state.shLftStyle;
 		let rgt = this.state.shRgtStyle;
@@ -480,10 +480,11 @@ class Pane extends React.Component {
 
 	vsplitterPointerUp ( evt ) {
 		const sW = 'Pane vsplitterPointerUp()';
-		console.log ( sW );
+	//	console.log ( sW );
 		let e = document.getElementById ( this.eleId + '-vsplitter' );
 		let top = this.state.svTopStyle;
 		let bot = this.state.svBotStyle;
+		this.topH0 = Number.parseInt ( top.minHeight ); 
 		let { minHeight, maxHeight } = top;
 		this.setState ( { svTopStyle: { 
 			minHeight: 		minHeight,
@@ -807,6 +808,7 @@ class Pane extends React.Component {
 			if ( o.to === 'client-content' ) {
 				if ( o.paneId === this.props.paneId ) {
 					this.ccFnc = o.fnc; 		//	Client Content
+					this.props.clientFnc ( o );	//	Give the app o.fnc.
 					//	If we have already gotten the client content state ...
 					if ( this.ccState ) {
 						this.ccFnc ( { do: 		'set-state',

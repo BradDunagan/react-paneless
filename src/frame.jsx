@@ -421,6 +421,8 @@ class Frame extends React.Component {
 	}	//	nameFrameName()
 
 	setBorderColor ( color ) {
+	//	let sW = this.props.frameId + ' Frame setBorderColor() ' + color;
+	//	console.log ( sW );
 		if ( this.state.iconized ) {
 			let iconized   = clone ( this.state.iconized );
 			iconized.style = clone ( this.state.iconized.style );
@@ -545,6 +547,7 @@ class Frame extends React.Component {
 		if ( o.to ) {
 			sW += ' to ' + o.to; }
 		diag ( [1, 2, 3], sW );
+	//	console.log ( sW );
 		let self = this;
 		function setCallDown ( o ) {
 			if ( ! o.to ) {

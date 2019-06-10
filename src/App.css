@@ -528,7 +528,6 @@ https://stackoverflow.com/questions/985134/absolute-positioning-elements-within-
 	flex:				1 1 auto;
 	min-width:			6px;
 	max-width:			6px;
-	height:				100%;
 	background-color:	lightgray;
 	cursor:				col-resize;
 }

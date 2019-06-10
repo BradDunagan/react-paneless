@@ -283,7 +283,7 @@ class AppContent extends React.Component {
 		if ( o.to ) {
 			sW += ' to ' + o.to; }
 	//	diag ( [1, 2], sW  );
-		console.log ( sW );
+	//	console.log ( sW );
 		if ( o.do === 'e2e-clear-output' ) {
 			this.e2eClearOutput ( o );
 			return;
