@@ -128,6 +128,7 @@ class AppHeaderUser extends React.Component {
 
 	clickDisplayName ( e ) {
 		console.log ( 'AppHeaderUser clickDisplayName()' );
+		this.props.clientFnc ( { do: 'click-user-display-name' } );
 	}   //  clickDisplayName()
 
 	render() {
@@ -135,7 +136,7 @@ class AppHeaderUser extends React.Component {
 			<div 
 				className = "rr-app-header-user"
 				onClick = {this.clickDisplayName}>
-				{this.props.usr.displayName}
+				{this.props.displayName}
 			</div>
 		)
 	}
@@ -145,32 +146,33 @@ class AppHeaderSignIn extends React.Component {
 	constructor ( props ) {
 		super ( props );
 		this.state = {
-			usr:        null,       //  Until sign in.
+			displayName:        null,       //  Until sign in.
 		}
 		this.clickSignIn = this.clickSignIn.bind ( this );
 		this.doAll = this.doAll.bind ( this );
-		props.appFrameFnc ( { do: 'set-call-down', 
-							  to: 'AppHeaderSignIn',
-							  fnc: this.doAll } );
+		props.clientFnc( { do: 'set-call-down', 
+						   to: 'app-header-sign-in',
+						   fnc: this.doAll } );
 	}
 
 	doAll ( o ) {
 		if ( o.do === 'display-user' ) {
-			this.setState ( { usr: o.usr } );
+			this.setState ( { displayName: o.displayName } );
 		}
 	}   //  doAll()
 
 	clickSignIn ( e ) {
 		console.log ( 'AppHeaderSignIn clickSignIn()' );
-		this.props.appFrameFnc ( { do: 'show-sign-in-dlg' } );
+		this.props.clientFnc( { do: 'show-sign-in-dlg' } );
 	}   //  clickSignIn()
 
 	render() {
-		const isSignedIn = (this.state.usr !== null);
+		const isSignedIn = (this.state.displayName !== null);
 		return (
 			<div>
 				{isSignedIn ? (
-					<AppHeaderUser usr = {this.state.usr} />
+					<AppHeaderUser clientFnc   = { this.props.clientFnc }
+								   displayName = { this.state.displayName } />
 				) : (
 					<div 
 						className = "rr-app-header-sign-in"
@@ -196,7 +198,8 @@ class AppHeader extends React.Component {
 				<AppHeaderMenuBar clientFnc   = { this.props.clientFnc }
 								  appFrameFnc = { this.props.appFrameFnc } />
 				<AppHeaderPID />
-				<AppHeaderSignIn appFrameFnc = { this.props.appFrameFnc } />
+				<AppHeaderSignIn clientFnc    = { this.props.clientFnc }
+								 appFrameFnc = { this.props.appFrameFnc } />
 			</div>
 		);
 	}

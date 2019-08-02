@@ -73,6 +73,7 @@ class AppDialog extends React.Component {
 				   		   ftrVisible		= { o.ftrVisible }
 				   		   frameName		= { o.frameName }
 				   		   frameType		= { o.frameType }
+						   frameAs			=  'dialog'
 				   		   frameId 			= { o.frameId }
 				   		   paneId			= { o.paneId }
 				   		   appFrameFnc 		= { this.props.appFrameFnc } 

@@ -21,6 +21,7 @@ class AppFrame extends Component {
 		this.activeDialogFnc	= null;
 		this.focusedFrameFnc	= null;
 		this.focusedPaneFnc		= null;
+		this.focusedFrameAs		= null;
 
 		this.keyDown		= this.keyDown.bind ( this );
 		this.mouseMove 		= this.mouseMove.bind ( this );
@@ -80,8 +81,10 @@ class AppFrame extends Component {
 	//		console.log ( sW + ' alt ' + ev.key ); 
 	//		if ( ev.key === 'Tab' ) {
 			let key = ev.key.toUpperCase();
-			if ( key === 'F' ) {
+			while ( key === 'F' ) {
 				ev.preventDefault();
+				if ( this.focusedFrameAs === 'dialog' ) {
+					break; }
 				//	If menu and not app title menu then close it.
 				if ( 	this.activeMenuFnc 
 					 && ! this.activeMenuFnc ( { do: 'is-app-title-menu' } ) ) {
@@ -171,6 +174,7 @@ class AppFrame extends Component {
 										appFrameFnc   = { this.doAll }
 										appContentFnc = { this.appContentFnc }
 										clientFnc	  = { this.props.clientFnc }
+										frameType	  = { r.frameType }
 										frame 		  = { r.frame } /> );
 				}
 				if ( r.dlg === 'app-dialog' ) {
@@ -232,13 +236,13 @@ class AppFrame extends Component {
 			this.frameSizing.startY 		= o.ev.pageY;
 			return;
 		}
-		if ( o.do === 'show-sign-in-dlg' ) {
-			this.dlgList.push ( { dlg: 		'sign-in',
-								  upFnc: 	this.doAll,
-								  ctx: 		null } );
-			this.updateDialogState();
-			return;
-		}
+	//	if ( o.do === 'show-sign-in-dlg' ) {
+	//		this.dlgList.push ( { dlg: 		'sign-in',
+	//							  upFnc: 	this.doAll,
+	//							  ctx: 		null } );
+	//		this.updateDialogState();
+	//		return;
+	//	}
 		if ( o.do === 'show-name-dlg' ) {
 			this.dlgList.push ( { dlg: 		'dlg-name',
 								  upFnc: 	o.upFnc,
@@ -253,8 +257,8 @@ class AppFrame extends Component {
 			return;
 		}
 		if ( o.do === 'app-dialog-frame' ) {
-			this.dlgList.push ( { dlg:		'app-dialog-frame',
-								  frame:	o.frame } );
+			this.dlgList.push ( { dlg:			'app-dialog-frame',
+								  frame:		o.frame } );
 			this.updateDialogState();
 			return;
 		}
@@ -281,11 +285,13 @@ class AppFrame extends Component {
 		}
 		if ( o.do === 'set-focused-frame-fnc' ) {
 			if ( o.focus ) {
-				this.focusedFrameFnc = o.focus.frameFnc;
-				this.focusedPaneFnc  = o.focus.paneFnc; }
+				this.focusedFrameAs	  = o.frameAs;
+				this.focusedFrameFnc  = o.focus.frameFnc;
+				this.focusedPaneFnc   = o.focus.paneFnc; }
 			else {
-				this.focusedFrameFnc = null;
-				this.focusedPaneFnc  = null; }
+				this.focusedFrameAs   = null;
+				this.focusedFrameFnc  = null;
+				this.focusedPaneFnc   = null; }
 			return;			
 		}
 	}	//	doAll()

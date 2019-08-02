@@ -6,6 +6,7 @@
 
 import React, { Component } from 'react';
 import MenuItem				from './menu-item'
+import clone				from 'clone';
 
 import {diag, diagsFlush, diagsPrint} 	from './diags';
 
@@ -70,8 +71,11 @@ class BurgerMenu extends Component {
 					return; }
 				let ele = document.getElementById ( this.props.eleId );
 
-				let x =   Number.parseInt ( this.props.style.left )
-						+ ele.clientWidth + 4;
+				let x = Number.parseInt ( this.props.style.left );
+				if ( x >= 0 ) {
+					x = x + ele.clientWidth + 4; }
+				else {
+				}
 				let y =   Number.parseInt ( this.props.style.top )
 						+ 0;
 				this.props.screenFnc ( {
@@ -262,6 +266,16 @@ class BurgerMenu extends Component {
 			this.setCurItem ( 0 )
 		} );
 	}	//	componentDidMount()
+	
+	componentDidUpdate() {
+		const sW = 'BurgerMenu componentDidUpdate()';
+		console.log ( sW );
+		let x = Number.parseInt ( this.props.style.left );
+		if ( x < 0 ) {
+			let ce = document.getElementById ( this.props.eleId );
+			let r  = ce.getBoundingClientRect();
+			ce.style.left = ((-x) - r.width) + 'px'; }
+	}	//	componentDidUpdate()
 
 
 }   //  class BurgerMenu

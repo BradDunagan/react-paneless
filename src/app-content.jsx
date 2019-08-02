@@ -319,6 +319,7 @@ class AppContent extends React.Component {
 		if ( o.do === 'set-frame-focus' ) {
 			let focus = this.setFrameFocus ( o.frameId );
 			this.props.appFrameFnc ( { do:		'set-focused-frame-fnc',
+									   frameAs:	o.frameAs,
 									   focus:	focus } );
 			return;
 		}

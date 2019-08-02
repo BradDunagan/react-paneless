@@ -186,7 +186,8 @@ class Frame extends React.Component {
 		let sW = 'Frame mouseDown()';
 	//	console.log ( sW );
 		this.props.appContentFnc ( { do:		'set-frame-focus',
-									frameId:	this.props.frameId } );
+									 frameAs:	this.props.frameAs,
+									 frameId:	this.props.frameId } );
 	}	//	mouseDown()
 
 	isHeaderVisible() {
@@ -401,6 +402,7 @@ class Frame extends React.Component {
 				}
 			} );
 			this.props.appContentFnc ( { do:		'set-frame-focus',
+									 	 frameAs:	this.props.frameAs,
 										 frameId:	this.props.frameId } );
 		}, 200 );
 	}	//	clickIcon()
@@ -903,6 +905,11 @@ class Frame extends React.Component {
 									 to:		'frame',
 									 frameId:	this.props.frameId,
 									 frameFnc:	this.doAll } );
+		
+		if ( this.props.frameAs === 'dialog' ) {
+			this.props.appContentFnc ( { do:		'set-frame-focus',
+										 frameAs:	this.props.frameAs,
+										 frameId:	this.props.frameId } ); }
 	}	//	componentDidMount()
 
 	componentDidUpdate() {
