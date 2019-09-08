@@ -695,6 +695,9 @@ class Pane extends React.Component {
 		let state = clone ( this.state );
 		let sh = state.splitHorz;
 		let sv = state.splitVert;
+		if ( o.do === 'get-state-2' ) {
+			o = clone ( o );
+			o.do = 'get-state'; }
 		if ( sh ) {
 			sh.left.contentState = sh.left.paneFnc ( o );
 			sh.left.paneFnc = null;
@@ -715,6 +718,7 @@ class Pane extends React.Component {
 			state.ccState = null; }
 		if ( this.state.tabs ) {
 			state.tabsState = this.tabsFnc ( o );
+			console.log ( 'got tabsState' );
 		} else {
 			state.tabsState = false; }
 
@@ -957,12 +961,16 @@ class Pane extends React.Component {
 			return false;
 		}
 		if ( o.do === 'get-state' ) {
+			let state = this.doGetState ( o );
 			this.props.clientFnc ( { do: 		'store-pane-state',
 									 paneId: 	this.props.paneId,
-									 state:		this.doGetState ( o ) } );
+									 state:		state } );
+			if ( state.tabsState ) {
+				return state; }
 			return null;
 		}
 		if ( o.do === 'set-state' ) {
+			console.log ( sW );
 			let state = this.props.clientFnc ( { 
 							do: 	'load-pane-state',
 							paneId:	this.props.paneId } );
@@ -974,6 +982,7 @@ class Pane extends React.Component {
 			return this.doGetState ( o );
 		}
 		if ( o.do === 'set-state-2' ) {
+			console.log ( sW );
 			return this.doSetState ( o.state );
 		}
 		if ( o.do === 'burger-menu-dismissed' ) {
