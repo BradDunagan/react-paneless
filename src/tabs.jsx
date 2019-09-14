@@ -68,7 +68,7 @@ class Tabs extends Component {
 	}	//	constructor
 	
 
-	addTabPageName ( paneId, text, cbPageName ) {
+	addTabPageName ( paneId, text, textUserSet, cbPageName ) {
 
 		let tabId  = getNextTabId();
 		if ( paneId === 0 ) {
@@ -100,8 +100,9 @@ class Tabs extends Component {
 		};
 
 		let eleId = 'rr-tab-name-' + tabId;
-		this.names[eleId] = { tabId:	tabId,
-							  text:		text ? text : null };
+		this.names[eleId] = { tabId:		tabId,
+							  text:			text ? text : null,
+							  textUserSet:	textUserSet };
 		this.setPageNamesState ( cbPageName, eleId );
 
 	}	//	addTabPageName()
@@ -163,7 +164,7 @@ class Tabs extends Component {
 
 	addTab ( cb, paneId ) {
 		let self = this;
-		this.addTabPageName ( paneId, 'Tab Name', ( eleId ) => {
+		this.addTabPageName ( paneId, 'Tab Name', false, ( eleId ) => {
 			self.nameFncs[eleId] ( { do: 		'select',
 									 selected:	true } );
 			self.selectTab ( eleId );
@@ -201,6 +202,14 @@ class Tabs extends Component {
 			let d = this.names[eleId];
 			if ( d.tabId !== o.ctx.tabId ) {
 				continue; }
+
+			//	do not set initial-tab-name if the user has set the name
+			if ( ! o.initialTabName ) {
+				d.textUserSet = true; }
+			else {
+				if ( d.textUserSet ) {
+					break; } }
+
 			d.text = o.name;
 			this.setPageNamesState ( null);
 			break; }
@@ -221,7 +230,9 @@ class Tabs extends Component {
 				return; }
 			let name = names[i++]
 			let page = o.state.pages[name[1].tabId];
-			self.addTabPageName ( page.paneId, name[1].text, ( eleId ) => {
+			self.addTabPageName ( page.paneId, 
+								  name[1].text, 
+								  name[1].textUserSet, ( eleId ) => {
 				if ( name[0] === o.state.selectedNameEleId ) {
 					selectedEleId = eleId; }
 				eachName();
@@ -382,8 +393,9 @@ class Tabs extends Component {
 			let pages = {};
 			for ( let eleId in this.names ) {
 				let name = this.names[eleId];
-				names[eleId] = { tabId: name.tabId,
-								 text:	name.text };
+				names[eleId] = { tabId: 		name.tabId,
+								 text:			name.text,
+								 textUserSet:	name.textUserSet };
 				let page = this.pages[name.tabId];
 				pages[name.tabId] = {
 					paneId:		page.paneId,
@@ -448,21 +460,6 @@ class Tabs extends Component {
 	componentDidMount() {
 		let sW = 'Tabs componentDidMount()';
 		diag ( [1,2,3], sW );
-	//	this.addTabPageName ( 0, 'Tab Name', ( eleId ) => {
-	//		this.nameFncs[eleId] ( { do: 		'select',
-	//								 selected:	true } );
-	//		this.selectedNameEleId = eleId;
-	//	} );
-	
-	//	this.addTab ( () => {
-	//	//	if ( this.oState ) {
-	//	//		this.oSetState ( this.oState );
-	//	//		this.oState = null; }
-	//		this.submitState()
-	//	} );
-	
-	//	this.addTab();
-	//	this.submitState();
 		this.isMountified = true;
 	}	//	componentDidMount()
 

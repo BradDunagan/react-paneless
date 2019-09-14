@@ -1022,6 +1022,7 @@ class Pane extends React.Component {
 			if ( (! this.props.tabId) || (! this.props.tabsFnc) ) {
 				return; }
 			this.props.tabsFnc ( { do:		'name-tab-name',
+								   initialTabName:	true,
 								   ctx:		{ tabId: this.props.tabId },
 								   name: 	o.initialTabText } );
 			return;
